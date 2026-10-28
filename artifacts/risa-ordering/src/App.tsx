@@ -262,7 +262,7 @@ function App() {
                     <span className="group-index">{String(groupIndex + 1).padStart(2, '0')}</span>
                     <h3 id={`heading-${group.id}`}>{group.name}</h3>
                   </div>
-                  {group.photo && <img className="menu-group-photo" src={group.photo} alt={group.photoAlt ?? ''} loading="lazy" />}
+                  {group.photo && <img className="menu-group-photo" src={group.photo} alt={group.photoAlt ?? ''} data-testid={`img-menu-${group.id}`} />}
                   {group.note && <p className="extras-note">{group.note}</p>}
                   {group.items.map((product) => {
                     const selectedOptions = selections[product.id] ?? [];
