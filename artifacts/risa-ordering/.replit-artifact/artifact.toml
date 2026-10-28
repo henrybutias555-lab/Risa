@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "RISA Food Ordering"
+description = "A mobile-friendly menu and order page for RISA. Customers browse Ghanaian meals and snacks, select quantities, and send a prefilled order to RISA on WhatsApp."
+version = "1.0.0"
+id = "artifacts/risa-ordering"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19408
+
+[services.development]
+run = "pnpm --filter @workspace/risa-ordering run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/risa-ordering", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/risa-ordering/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19408"
+BASE_PATH = "/"
