@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ArrowDown, ArrowRight, Clock3, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
 import heroFood from './assets/risa-food-hero.jpg';
-import saladPhoto from './assets/menu-photos/salads.jpg';
-import noodlesPhoto from './assets/menu-photos/noodles.jpg';
-import wingsPhoto from './assets/menu-photos/wings.jpg';
-import mozzarellaPhoto from './assets/menu-photos/mozzarella.jpg';
-import drinksPhoto from './assets/menu-photos/drinks.jpg';
+import saladPhoto from './assets/menu-photos/salads-editorial.jpg';
+import noodlesPhoto from './assets/menu-photos/noodles-editorial.jpg';
+import buldakPhoto from './assets/menu-photos/buldak-editorial.jpg';
+import wingsPhoto from './assets/menu-photos/wings-editorial.jpg';
+import mozzarellaPhoto from './assets/menu-photos/mozzarella-editorial.jpg';
+import drinksPhoto from './assets/menu-photos/drinks-editorial.jpg';
 
 type Product = {
   id: string;
@@ -55,7 +56,7 @@ const menu: MenuGroup[] = [
     name: 'Buldak Noodles',
     id: 'buldak',
     note: 'Choose one Buldak flavor. Add sausage or egg if you like.',
-    photo: heroFood,
+    photo: buldakPhoto,
     photoAlt: 'Spicy Buldak noodles with chicken, vegetables and egg',
     items: [
       { id: 'fire-craving', name: 'Fire Craving', price: 70, description: 'Buldak noodles with your choice of flavor, sausage & eggs.', choice: 'buldak' },
@@ -109,6 +110,9 @@ const menu: MenuGroup[] = [
 ];
 
 const formatCedis = (amount: number) => `GH₵ ${amount.toFixed(2).replace(/\.00$/, '')}`;
+const whatsappGreetingHref = `https://wa.me/233241280476?text=${encodeURIComponent(
+  'Hi RISA! 👋 I’ve checked out the menu and I’m ready for something delicious. Could you help me place an order and let me know what’s available today? 🍜✨'
+)}`;
 
 function App() {
   const [cart, setCart] = useState<CartLine[]>([]);
@@ -141,16 +145,19 @@ function App() {
   const whatsappHref = useMemo(() => {
     if (!cart.length) return '#order';
     const lines = [
-      'Hi RISA! I would like to place an order:',
+      'Hi RISA team! 👋✨',
+      'I’d love to place this order:',
       '',
-      ...cart.map((line) => {
-        const optionText = line.options.length ? `\n   ${line.options.join(' · ')}` : '';
-        return `${line.quantity} × ${line.product.name}${optionText}\n   ${formatCedis(line.unitPrice * line.quantity)}`;
+      ...cart.map((line, index) => {
+        const optionText = line.options.length ? `\n   ↳ ${line.options.join(', ')}` : '';
+        return `${index + 1}. ${line.product.name} × ${line.quantity}${optionText}\n   ${formatCedis(line.unitPrice * line.quantity)}`;
       }),
       '',
-      `Estimated total: ${formatCedis(total)}`,
+      `🧾 Estimated total: ${formatCedis(total)}`,
       '',
-      'Please let me know the next steps. Thank you!',
+      'Please confirm availability and share the pickup or delivery next steps.',
+      '',
+      'Thank you — I’m looking forward to it! 😋',
     ];
     return `https://wa.me/233241280476?text=${encodeURIComponent(lines.join('\n'))}`;
   }, [cart, total]);
@@ -225,7 +232,7 @@ function App() {
             <p>From the first forkful of craving noodles to that last sweet spoonful. Your comfort-food kind of day starts here.</p>
             <div className="hero-actions">
               <a className="button-primary" href="#menu" data-testid="link-browse-menu">Find your favourite <ArrowDown size={15} /></a>
-              <a className="button-outline" href="https://wa.me/233241280476" target="_blank" rel="noreferrer" data-testid="link-whatsapp-hero">Say hello on WhatsApp <ArrowRight size={14} /></a>
+              <a className="button-outline" href={whatsappGreetingHref} target="_blank" rel="noreferrer" data-testid="link-whatsapp-hero">Say hello on WhatsApp <ArrowRight size={14} /></a>
             </div>
             <div className="hero-note"><strong>Friday–Sunday</strong> <span>·</span> 12:00–20:00 <span>·</span> Made for your cravings</div>
           </div>
@@ -243,7 +250,7 @@ function App() {
           <span>12:00–20:00</span>
           <span className="hours-dot" />
           <span>Call / WhatsApp</span>
-          <a href="https://wa.me/233241280476" className="hours-phone" data-testid="link-hours-whatsapp">+233 24 128 0476</a>
+          <a href={whatsappGreetingHref} className="hours-phone" target="_blank" rel="noreferrer" data-testid="link-hours-whatsapp">+233 24 128 0476</a>
         </div>
 
         <section className="menu-section" id="menu">
@@ -359,7 +366,7 @@ function App() {
                 <a className={`whatsapp-button ${cart.length ? '' : 'disabled'}`} href={whatsappHref} target={cart.length ? '_blank' : undefined} rel={cart.length ? 'noreferrer' : undefined} aria-disabled={!cart.length} onClick={(event) => { if (!cart.length) event.preventDefault(); }} data-testid="link-send-order">
                   Send order on WhatsApp <ArrowRight size={15} />
                 </a>
-                <a className="cart-phone" href="https://wa.me/233241280476" target="_blank" rel="noreferrer" data-testid="link-cart-phone">+233 24 128 0476 · tap to chat</a>
+                <a className="cart-phone" href={cart.length ? whatsappHref : whatsappGreetingHref} target="_blank" rel="noreferrer" data-testid="link-cart-phone">+233 24 128 0476 · tap to chat</a>
               </div>
             </aside>
           </div>
@@ -380,7 +387,7 @@ function App() {
           </div>
           <div className="footer-meta">
             <div><small>Come through</small><strong>Friday–Sunday · 12:00–20:00</strong></div>
-            <div><small>Call / WhatsApp</small><a href="https://wa.me/233241280476" target="_blank" rel="noreferrer" data-testid="link-footer-phone">+233 24 128 0476</a></div>
+            <div><small>Call / WhatsApp</small><a href={whatsappGreetingHref} target="_blank" rel="noreferrer" data-testid="link-footer-phone">+233 24 128 0476</a></div>
           </div>
         </div>
         <div className="footer-bottom"><span>Good food. Great vibes. Always.</span><span>RISA · Crafted for cravings</span></div>
