@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowDown, ArrowRight, Clock3, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
-import heroFood from './assets/risa-food-hero.jpg';
-import saladPhoto from './assets/menu-photos/salads-editorial.jpg';
-import noodlesPhoto from './assets/menu-photos/noodles-editorial.jpg';
-import buldakPhoto from './assets/menu-photos/buldak-editorial.jpg';
-import wingsPhoto from './assets/menu-photos/wings-editorial.jpg';
-import mozzarellaPhoto from './assets/menu-photos/mozzarella-editorial.jpg';
-import drinksPhoto from './assets/menu-photos/drinks-editorial.jpg';
+import { ArrowDown, ArrowRight, Clock3, Menu as MenuIcon, Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react';
+import risaLogo from './assets/risa-logo-design.jpeg';
+import saladPhoto from './assets/menu-photos/salads-risa.jpg';
+import noodlesPhoto from './assets/menu-photos/noodles-risa.jpg';
+import buldakPhoto from './assets/menu-photos/buldak-risa.jpg';
+import wingsPhoto from './assets/menu-photos/wings-risa.jpg';
+import mozzarellaPhoto from './assets/menu-photos/mozzarella-risa.jpg';
+import drinksPhoto from './assets/menu-photos/sago-risa.jpg';
 
 type Product = {
   id: string;
@@ -89,7 +89,7 @@ const menu: MenuGroup[] = [
     name: 'Drinks & Something Sweet',
     id: 'drinks',
     photo: drinksPhoto,
-    photoAlt: 'RISA pineapple juice, sago dessert and fruit parfait',
+    photoAlt: 'A RISA Sweet Sago Cloud cup with the RISA mark on the label',
     items: [
       { id: 'ice-kenkey', name: 'Ice Kenkey', price: 15, description: 'Refreshing & creamy.' },
       { id: 'pineapple-juice', name: 'Pineapple Juice', price: 15, description: 'Pure goodness.' },
@@ -118,6 +118,7 @@ function App() {
   const [cart, setCart] = useState<CartLine[]>([]);
   const [selections, setSelections] = useState<Record<string, string[]>>({});
   const [toast, setToast] = useState('');
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
     document.title = 'RISA — Crafted for Cravings | Ghanaian Comfort Food';
@@ -126,7 +127,7 @@ function App() {
       'og:title': 'RISA — Crafted for Cravings',
       'og:description': 'A little joy in every bite. Browse the RISA menu and order straight on WhatsApp.',
       'og:type': 'website',
-      'og:image': heroFood,
+      'og:image': risaLogo,
     };
     Object.entries(metadata).forEach(([key, content]) => {
       const isProperty = key.startsWith('og:');
@@ -216,12 +217,15 @@ function App() {
           <span className="brand-mark">R</span>
           <span><span className="brand-name">RISA</span><span className="brand-sub">CRAFTED FOR CRAVINGS</span></span>
         </a>
-        <nav className="nav-links" aria-label="Main navigation">
+        <nav id="main-navigation" className={`nav-links${mobileNavOpen ? ' nav-links-open' : ''}`} aria-label="Main navigation" onClick={() => setMobileNavOpen(false)}>
           <a href="#menu" data-testid="link-menu">The menu</a>
           <a href="#hours" data-testid="link-hours">Hours</a>
           <a href="#contact" data-testid="link-contact">Find us</a>
         </nav>
-        <a className="header-order" href="#order" data-testid="link-header-order"><ShoppingBag size={15} /> Your order <span>{cartCount}</span></a>
+        <a className="header-order" href="#order" aria-label={`View your order, ${cartCount} items`} data-testid="link-header-order"><ShoppingBag size={15} /><span className="header-order-label">Your order</span><span>{cartCount}</span></a>
+        <button className="mobile-nav-toggle" type="button" aria-label={mobileNavOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-controls="main-navigation" aria-expanded={mobileNavOpen} onClick={() => setMobileNavOpen((open) => !open)} data-testid="button-mobile-menu">
+          {mobileNavOpen ? <X size={19} /> : <MenuIcon size={19} />}
+        </button>
       </header>
 
       <main>
@@ -236,10 +240,8 @@ function App() {
             </div>
             <div className="hero-note"><strong>Friday–Sunday</strong> <span>·</span> 12:00–20:00 <span>·</span> Made for your cravings</div>
           </div>
-          <div className="hero-visual" aria-label="RISA spicy chicken noodles">
-            <div className="hero-photo"><img src={heroFood} alt="A generous bowl of spicy stir-fried noodles with chicken and egg" /></div>
-            <div className="photo-label"><strong>Made with<br />good vibes</strong><span>ALWAYS</span></div>
-            <div className="scribble">your next favourite bite</div>
+            <div className="hero-visual hero-logo-visual" aria-label="RISA Crafted for Cravings logo">
+              <div className="hero-photo"><img src={risaLogo} alt="RISA Crafted for Cravings logo with its bowl and chopstick design" /></div>
           </div>
         </section>
 
@@ -264,7 +266,7 @@ function App() {
           <div className="menu-layout">
             <div className="menu-groups">
               {menu.map((group, groupIndex) => (
-                <section className="menu-group" id={group.id} key={group.id} aria-labelledby={`heading-${group.id}`}>
+                <section className={`menu-group${group.photo ? '' : ' menu-group-no-photo'}`} id={group.id} key={group.id} aria-labelledby={`heading-${group.id}`}>
                   <div className="menu-group-heading">
                     <span className="group-index">{String(groupIndex + 1).padStart(2, '0')}</span>
                     <h3 id={`heading-${group.id}`}>{group.name}</h3>
