@@ -1,409 +1,648 @@
-import { useEffect, useMemo, useState } from 'react';
-import { ArrowDown, ArrowRight, Clock3, Menu as MenuIcon, Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react';
-import risaLogo from './assets/risa-logo-design.jpeg';
-import saladPhoto from './assets/menu-photos/salads-risa.jpg';
-import noodlesPhoto from './assets/menu-photos/noodles-risa.jpg';
-import buldakPhoto from './assets/menu-photos/buldak-risa.jpg';
-import wingsPhoto from './assets/menu-photos/wings-risa.jpg';
-import mozzarellaPhoto from './assets/menu-photos/mozzarella-risa.jpg';
-import drinksPhoto from './assets/menu-photos/sago-risa.jpg';
+import React, { useState, useMemo } from 'react';
+import { 
+  ArrowRight, 
+  Clock, 
+  Phone, 
+  Plus, 
+  Minus, 
+  ShoppingBag, 
+  X, 
+  Send, 
+  AlertCircle,
+  Sparkles
+} from 'lucide-react';
 
-type Product = {
+// Use your existing project logo
+import risaLogo from './assets/risa-logo-design.jpg';
+
+type Category = 'salads' | 'noodles' | 'penne' | 'gizdodo' | 'wings' | 'drinks' | 'extras';
+
+interface Product {
   id: string;
   name: string;
   price: number;
-  description?: string;
-  choice?: 'wings' | 'buldak' | 'sago' | 'parfait' | 'noodle-extras';
-  noodleBase?: boolean;
-};
+  category: Category;
+  description: string;
+  badge?: string;
+  flavors?: string[];
+  optionsNote?: string;
+  image?: string;
+}
 
-type MenuGroup = {
-  name: string;
-  id: string;
-  items: Product[];
-  note?: string;
-  photo?: string;
-  photoAlt?: string;
-};
-type CartLine = { key: string; product: Product; quantity: number; options: string[]; unitPrice: number };
+const MENU_ITEMS: Product[] = [
+  // --- SALAD BOWLS ---
+  {
+    id: 'salad-mini',
+    name: 'Mini Salad Bowl',
+    price: 30,
+    category: 'salads',
+    description: 'Vegetables, sardine, egg, corned beef, ketchup, baked beans, special sauce.',
+    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'salad-classic',
+    name: 'Classic Salad Bowl',
+    price: 50,
+    category: 'salads',
+    badge: 'POPULAR',
+    description: 'Vegetables, sardines, egg, sausage, corned beef, sweet corn, macaroni, special sauce, ketchup, baked beans, sweet potato.',
+    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'salad-cluck',
+    name: 'Cluck Chicken Salad Bowl',
+    price: 70,
+    category: 'salads',
+    description: 'Vegetables, egg, gizzards, macaroni, sweet corn, chicken, special sauce, ketchup, baked beans, sweet potato.',
+    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'
+  },
 
-const menu: MenuGroup[] = [
+  // --- NOODLES / STIR FRY PASTA ---
   {
-    name: 'Salads',
-    id: 'salads',
-    photo: saladPhoto,
-    photoAlt: 'A colorful RISA salad with vegetables, corn and egg',
-    items: [
-      { id: 'ghanaian-salad', name: 'Ghanaian Regular Salad', price: 50, description: 'Vegetables, sardines, egg, corned beef, sweet corn, macaroni, special sauce & ketchup.' },
-      { id: 'chicken-salad', name: 'Chicken Salad', price: 70, description: 'Vegetables, egg, pasta, sweet corn, chicken, special sauce & ketchup.' },
-    ],
+    id: 'noodles-reg',
+    name: 'Regular Noodles / Stir-fry Pasta',
+    price: 30,
+    category: 'noodles',
+    description: 'Noodles or pasta, vegetables, egg, sausage, sardine, corned beef.',
+    image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80'
   },
   {
-    name: 'Noodles / Stir Fry Pasta',
-    id: 'noodles',
-    note: 'Choose noodles or stir-fry pasta. Classic and Cluck include one extra egg or sausage.',
-    photo: noodlesPhoto,
-    photoAlt: 'A bowl of RISA craving noodles with egg and vegetables',
-    items: [
-      { id: 'mini-craving', name: 'Mini Craving Noodles / stir fry pasta', price: 40, description: 'Noodles or pasta with vegetables, sausage, sardines, egg & corned beef.', noodleBase: true },
-      { id: 'classic-craving', name: 'Classic Craving Noodles or Stir Fry Pasta', price: 50, description: 'Noodles or pasta, vegetables, sausage, sardines, eggs, corned beef & gizzard.', choice: 'noodle-extras', noodleBase: true },
-      { id: 'cluck-craving', name: 'Cluck Craving Noodles / Stirfry Pasta', price: 70, description: 'Noodles or pasta, vegetables, sausage, sardines, eggs, corned beef, chicken, gizzard & meat.', choice: 'noodle-extras', noodleBase: true },
-      { id: 'og-craving', name: 'OG Craving', price: 100, description: 'Noodles or pasta, vegetables, sausages, sardines, eggs, corned beef, chicken, shrimp & meat.', noodleBase: true },
-      { id: 'mini-wings', name: 'Mini Craving + Chicken Wings', price: 100, description: 'Mini Craving noodles with chicken wings.', noodleBase: true },
-    ],
+    id: 'noodles-mini',
+    name: 'Mini Craving Noodles / Stir-fry Pasta',
+    price: 40,
+    category: 'noodles',
+    badge: 'POPULAR',
+    description: 'Noodles or pasta, vegetables, sausages, sardines, eggs, gizzard, corned beef.',
+    optionsNote: 'Comes with either extra egg or sausage',
+    image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=800&q=80'
   },
   {
-    name: 'Buldak Noodles',
-    id: 'buldak',
-    note: 'Choose one Buldak flavor. Add sausage or egg if you like.',
-    photo: buldakPhoto,
-    photoAlt: 'Spicy Buldak noodles with chicken, vegetables and egg',
-    items: [
-      { id: 'fire-craving', name: 'Fire Craving', price: 70, description: 'Buldak noodles with your choice of flavor, sausage & eggs.', choice: 'buldak' },
-      { id: 'risbuldak', name: 'RisBuldak', price: 120, description: 'Buldak noodles with your choice of flavor, sausage, egg, shrimp & cheese.', choice: 'buldak' },
-    ],
+    id: 'noodles-classic',
+    name: 'Classic Craving Noodles or Stir Fry Pasta',
+    price: 50,
+    category: 'noodles',
+    description: 'Noodles or pasta, vegetables, sausages, sardines, eggs, corned beef, gizzard.',
+    optionsNote: 'Comes with either extra egg or sausage',
+    image: 'https://images.unsplash.com/photo-1612927601601-6638404737ce?auto=format&fit=crop&w=800&q=80'
   },
   {
-    name: 'Chicken Wings',
-    id: 'wings',
-    note: 'Choose your glaze: spicy or BBQ.',
-    photo: wingsPhoto,
-    photoAlt: 'RISA glazed chicken wings served with dipping sauce',
-    items: [
-      { id: 'wings-5', name: 'Chicken Wings · 5 pieces', price: 50, choice: 'wings' },
-      { id: 'wings-10', name: 'Chicken Wings · 10 pieces', price: 100, choice: 'wings' },
-    ],
+    id: 'noodles-cluck',
+    name: 'Cluck Craving Noodles / Stir-fry Pasta',
+    price: 70,
+    category: 'noodles',
+    description: 'Noodles or pasta, vegetables, sausages, sardines, eggs, corned beef, chicken, gizzard, meat.',
+    optionsNote: 'Comes with either extra egg or sausage',
+    image: 'https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format&fit=crop&w=800&q=80'
   },
   {
-    name: 'Mozzarella Sticks',
-    id: 'mozzarella',
-    note: 'Served with a special sauce.',
-    photo: mozzarellaPhoto,
-    photoAlt: 'Golden mozzarella sticks with dipping sauce',
-    items: [
-      { id: 'mozz-5', name: 'Mozzarella Sticks · 5 pieces', price: 60 },
-      { id: 'mozz-10', name: 'Mozzarella Sticks · 10 pieces', price: 115 },
-    ],
+    id: 'noodles-og',
+    name: 'OG Craving',
+    price: 100,
+    category: 'noodles',
+    badge: 'SIGNATURE',
+    description: 'Noodles or pasta, vegetables, sausages, sardines, eggs, gizzard, corned beef, chicken, shrimp & meat.',
+    optionsNote: 'Comes with extra egg and sausage',
+    image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80'
   },
   {
-    name: 'Drinks & Something Sweet',
-    id: 'drinks',
-    photo: drinksPhoto,
-    photoAlt: 'A RISA Sweet Sago Cloud cup with the RISA mark on the label',
-    items: [
-      { id: 'ice-kenkey', name: 'Ice Kenkey', price: 15, description: 'Refreshing & creamy.' },
-      { id: 'pineapple-juice', name: 'Pineapple Juice', price: 15, description: 'Pure goodness.' },
-      { id: 'sweet-sago', name: 'Sweet Sago Cloud', price: 50, description: 'Choose a flavor: mango, strawberry or banana.', choice: 'sago' },
-      { id: 'parfait', name: 'Parfait', price: 50, description: 'Yogurt, granola and two toppings of fruit.', choice: 'parfait' },
-    ],
+    id: 'noodles-wings-combo',
+    name: 'Mini Craving + Chicken Wings',
+    price: 100,
+    category: 'noodles',
+    badge: 'COMBO',
+    description: 'Mini Craving noodles or stir-fry pasta served with crispy chicken wings.',
+    image: 'https://images.unsplash.com/photo-1527477321005-4d45d724b8c4?auto=format&fit=crop&w=800&q=80'
+  },
+
+  // --- PENNE PASTA BOWL ---
+  {
+    id: 'penne-small',
+    name: 'Penne Pasta Bowl (Small)',
+    price: 40,
+    category: 'penne',
+    description: 'Rich savoury penne pasta bowl tossed in house sauce and vegetables.',
+    image: 'https://images.unsplash.com/photo-1621996346565-e3d5d6281084?auto=format&fit=crop&w=800&q=80'
   },
   {
-    name: 'Extras',
-    id: 'extras',
-    note: 'Add a little extra to your favourite meal.',
-    items: [
-      { id: 'extra-sausage', name: 'Sausage', price: 5 },
-      { id: 'extra-egg', name: 'Egg', price: 5 },
-      { id: 'extra-chicken', name: 'Chicken', price: 15 },
-    ],
+    id: 'penne-chicken-turkey',
+    name: 'Penne Pasta Bowl (Regular with Chicken/Turkey)',
+    price: 70,
+    category: 'penne',
+    description: 'Generous penne pasta bowl with your choice of seasoned chicken or turkey.',
+    image: 'https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?auto=format&fit=crop&w=800&q=80'
   },
+
+  // --- GIZDODO ---
+  {
+    id: 'gizdodo-small',
+    name: 'Gizdodo (Small Pack)',
+    price: 40,
+    category: 'gizdodo',
+    description: 'Peppered gizzards and sweet fried ripe plantains tossed in spicy bell pepper sauce.',
+    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'gizdodo-chicken-turkey',
+    name: 'Gizdodo (Regular Pack with Chicken/Turkey)',
+    price: 70,
+    category: 'gizdodo',
+    description: 'Rich spiced gizdodo paired with tender seasoned chicken or turkey.',
+    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80'
+  },
+
+  // --- WINGS & SNACKS ---
+  {
+    id: 'wings-5',
+    name: 'Chicken Wings · 5 pieces',
+    price: 50,
+    category: 'wings',
+    flavors: ['Spicy', 'BBQ'],
+    description: 'Crispy, seasoned chicken wings. Five pieces. Choose Spicy or BBQ flavor.',
+    image: 'https://images.unsplash.com/photo-1527477321005-4d45d724b8c4?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'wings-10',
+    name: 'Chicken Wings · 10 pieces',
+    price: 90,
+    category: 'wings',
+    badge: 'VALUE',
+    flavors: ['Spicy', 'BBQ'],
+    description: 'Crispy, seasoned chicken wings. Ten pieces. Choose Spicy or BBQ flavor.',
+    image: 'https://images.unsplash.com/photo-1527477321005-4d45d724b8c4?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'mozz-5',
+    name: 'Mozzarella Sticks · 5 pieces',
+    price: 60,
+    category: 'wings',
+    description: 'Golden, gooey mozzarella sticks. Five pieces. Served with special dipping sauce.',
+    image: 'https://images.unsplash.com/photo-1548340742-b8332e25c24b?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'mozz-10',
+    name: 'Mozzarella Sticks · 10 pieces',
+    price: 115,
+    category: 'wings',
+    description: 'Golden, gooey mozzarella sticks. Ten pieces. Served with special dipping sauce.',
+    image: 'https://images.unsplash.com/photo-1548340742-b8332e25c24b?auto=format&fit=crop&w=800&q=80'
+  },
+
+  // --- DRINKS & SOMETHING SWEET ---
+  {
+    id: 'drink-kenkey',
+    name: 'Ice Kenkey',
+    price: 15,
+    category: 'drinks',
+    badge: 'LOCAL FAVOURITE',
+    description: 'Refreshing & creamy chilled local delicacy with sweet condensed milk.',
+    image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'drink-sobolo',
+    name: 'Sobolo',
+    price: 10,
+    category: 'drinks',
+    badge: 'ICE COLD',
+    description: 'Traditional spiced chilled hibiscus drink with ginger, cloves & pineapple zest.',
+    image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'drink-pineapple',
+    name: 'Pineapple Juice',
+    price: 15,
+    category: 'drinks',
+    description: 'Pure goodness. Freshly squeezed Ghanaian sweet pineapple.',
+    image: 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'sweet-sago',
+    name: 'Sweet Sago Cloud',
+    price: 50,
+    category: 'drinks',
+    flavors: ['Mango', 'Strawberry', 'Banana'],
+    description: 'Velvety sweet dessert cloud. Choose your flavor: Mango, Strawberry, or Banana.',
+    image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'sweet-parfait',
+    name: 'Parfait',
+    price: 50,
+    category: 'drinks',
+    description: 'Creamy yogurt, crunchy golden granola and two toppings of fresh fruit.',
+    image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80'
+  },
+
+  // --- EXTRAS ---
+  {
+    id: 'extra-sausage',
+    name: 'Extra Sausage',
+    price: 5,
+    category: 'extras',
+    description: 'Add sausage to any order.'
+  },
+  {
+    id: 'extra-egg',
+    name: 'Extra Egg',
+    price: 5,
+    category: 'extras',
+    description: 'Add egg to any order.'
+  },
+  {
+    id: 'extra-chicken',
+    name: 'Extra Chicken',
+    price: 15,
+    category: 'extras',
+    description: 'Add seasoned chicken to any order.'
+  },
+  {
+    id: 'extra-fries',
+    name: 'Fries',
+    price: 25,
+    category: 'extras',
+    description: 'Crispy hot seasoned potato fries.'
+  }
 ];
 
-const formatCedis = (amount: number) => `GH₵ ${amount.toFixed(2).replace(/\.00$/, '')}`;
-const whatsappGreetingHref = `https://wa.me/233241280476?text=${encodeURIComponent(
-  'Hi RISA! 👋 I’ve checked out the menu and I’m ready for something delicious. Could you help me place an order and let me know what’s available today? 🍜✨'
-)}`;
+export default function App() {
+  const [activeTab, setActiveTab] = useState<string>('salads');
+  const [cart, setCart] = useState<{ [id: string]: number }>({});
+  const [spiceLevel, setSpiceLevel] = useState<'Mild' | 'Spicy' | 'Hot'>('Mild');
+  const [orderType, setOrderType] = useState<'Delivery' | 'Pick up'>('Delivery');
+  const [allergyNote, setAllergyNote] = useState<string>('');
+  const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
 
-function App() {
-  const [cart, setCart] = useState<CartLine[]>([]);
-  const [selections, setSelections] = useState<Record<string, string[]>>({});
-  const [toast, setToast] = useState('');
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const categories = [
+    { id: 'salads', label: 'Salads' },
+    { id: 'noodles', label: 'Noodles / Stir Fry Pasta' },
+    { id: 'penne', label: 'Penne Pasta' },
+    { id: 'gizdodo', label: 'Gizdodo' },
+    { id: 'wings', label: 'Wings & Snacks' },
+    { id: 'drinks', label: 'Drinks & Sweets' },
+    { id: 'extras', label: 'Extras' },
+  ];
 
-  useEffect(() => {
-    document.title = 'RISA — Crafted for Cravings | Ghanaian Comfort Food';
-    const metadata: Record<string, string> = {
-      description: 'Good food, great vibes always. Order RISA Ghanaian comfort food, craving noodles, chicken wings, salads, snacks and refreshing drinks on WhatsApp.',
-      'og:title': 'RISA — Crafted for Cravings',
-      'og:description': 'A little joy in every bite. Browse the RISA menu and order straight on WhatsApp.',
-      'og:type': 'website',
-      'og:image': risaLogo,
-    };
-    Object.entries(metadata).forEach(([key, content]) => {
-      const isProperty = key.startsWith('og:');
-      let tag = document.querySelector<HTMLMetaElement>(`meta[${isProperty ? 'property' : 'name'}="${key}"]`);
-      if (!tag) {
-        tag = document.createElement('meta');
-        tag.setAttribute(isProperty ? 'property' : 'name', key);
-        document.head.appendChild(tag);
+  const addToCart = (id: string) => {
+    setCart((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+  };
+
+  const removeFromCart = (id: string) => {
+    setCart((prev) => {
+      const copy = { ...prev };
+      if (copy[id] > 1) {
+        copy[id] -= 1;
+      } else {
+        delete copy[id];
       }
-      tag.content = content;
-    });
-  }, []);
-
-  const cartCount = cart.reduce((sum, line) => sum + line.quantity, 0);
-  const total = cart.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
-  const whatsappHref = useMemo(() => {
-    if (!cart.length) return '#order';
-    const lines = [
-      'Hi RISA team! 👋✨',
-      'I’d love to place this order:',
-      '',
-      ...cart.map((line, index) => {
-        const optionText = line.options.length ? `\n   ↳ ${line.options.join(', ')}` : '';
-        return `${index + 1}. ${line.product.name} × ${line.quantity}${optionText}\n   ${formatCedis(line.unitPrice * line.quantity)}`;
-      }),
-      '',
-      `🧾 Estimated total: ${formatCedis(total)}`,
-      '',
-      'Please confirm availability and share the pickup or delivery next steps.',
-      '',
-      'Thank you — I’m looking forward to it! 😋',
-    ];
-    return `https://wa.me/233241280476?text=${encodeURIComponent(lines.join('\n'))}`;
-  }, [cart, total]);
-
-  const announce = (message: string) => {
-    setToast(message);
-    window.setTimeout(() => setToast(''), 2100);
-  };
-
-  const setSingleOption = (productId: string, value: string) => {
-    setSelections((current) => ({ ...current, [productId]: value ? [value] : [] }));
-  };
-
-  const setNoodleOption = (productId: string, value: string, group: 'base' | 'side') => {
-    const baseOptions = ['Noodles', 'Stir-fry pasta'];
-    const sideOptions = ['Extra egg', 'Extra sausage'];
-    const replacedOptions = group === 'base' ? baseOptions : sideOptions;
-    setSelections((current) => {
-      const remaining = (current[productId] ?? []).filter((option) => !replacedOptions.includes(option));
-      return { ...current, [productId]: value ? [...remaining, value] : remaining };
+      return copy;
     });
   };
 
-  const addProduct = (product: Product) => {
-    const options = selections[product.id] ?? [];
-    const needsNoodleBase = product.noodleBase && !options.some((option) => ['Noodles', 'Stir-fry pasta'].includes(option));
-    const needsNoodleSide = product.choice === 'noodle-extras' && !options.some((option) => ['Extra egg', 'Extra sausage'].includes(option));
-    const needsFlavor = ['wings', 'buldak', 'sago'].includes(product.choice ?? '') && !options.length;
-    if (needsNoodleBase || needsNoodleSide || needsFlavor) {
-      announce(needsNoodleBase ? 'Choose noodles or stir-fry pasta first' : needsNoodleSide ? 'Choose an included egg or sausage first' : 'Choose a flavour first');
-      return;
+  const totalCount = useMemo(() => {
+    return Object.values(cart).reduce((a, b) => a + b, 0);
+  }, [cart]);
+
+  const totalPrice = useMemo(() => {
+    return Object.entries(cart).reduce((sum, [id, count]) => {
+      const item = MENU_ITEMS.find((m) => m.id === id);
+      return sum + (item ? item.price * count : 0);
+    }, 0);
+  }, [cart]);
+
+  const displayedItems = MENU_ITEMS.filter((item) => item.category === activeTab);
+
+  const sendWhatsAppOrder = () => {
+    if (totalCount === 0) return;
+
+    let msg = `*NEW ORDER - RISA (CRAFTED FOR CRAVINGS)*\n`;
+    msg += `--------------------------------\n`;
+    msg += `*Order Type:* ${orderType}\n`;
+    msg += `*Spice Level:* ${spiceLevel}\n`;
+    if (allergyNote.trim()) {
+      msg += `*Special Instructions/Allergies:* ${allergyNote.trim()}\n`;
     }
-    const key = `${product.id}:${[...options].sort().join('|') || 'plain'}`;
-    setCart((current) => {
-      const existing = current.find((line) => line.key === key);
-      if (existing) return current.map((line) => line.key === key ? { ...line, quantity: line.quantity + 1 } : line);
-      return [...current, { key, product, quantity: 1, options, unitPrice: product.price }];
+    msg += `\n*ORDER ITEMS:*\n`;
+
+    Object.entries(cart).forEach(([id, qty]) => {
+      const item = MENU_ITEMS.find((m) => m.id === id);
+      if (item) {
+        msg += `• ${qty}x ${item.name} = GH₵${item.price * qty}\n`;
+      }
     });
-    announce(`${product.name} added to your order`);
-  };
 
-  const changeQuantity = (key: string, delta: number) => {
-    setCart((current) => current.flatMap((line) => {
-      if (line.key !== key) return [line];
-      const quantity = line.quantity + delta;
-      return quantity > 0 ? [{ ...line, quantity }] : [];
-    }));
-  };
+    msg += `--------------------------------\n`;
+    msg += `*TOTAL AMOUNT: GH₵${totalPrice}*\n\n`;
+    msg += `_Please confirm my order & delivery details._`;
 
-  const removeLine = (key: string) => setCart((current) => current.filter((line) => line.key !== key));
+    const encoded = encodeURIComponent(msg);
+    window.open(`https://wa.me/233241280476?text=${encoded}`, '_blank');
+  };
 
   return (
-    <div className="page-shell">
-      <header className="topbar">
-        <a className="brand" href="#home" aria-label="RISA home" data-testid="link-home">
-          <span className="brand-mark">R</span>
-          <span><span className="brand-name">RISA</span><span className="brand-sub">CRAFTED FOR CRAVINGS</span></span>
-        </a>
-        <nav id="main-navigation" className={`nav-links${mobileNavOpen ? ' nav-links-open' : ''}`} aria-label="Main navigation" onClick={() => setMobileNavOpen(false)}>
-          <a href="#menu" data-testid="link-menu">The menu</a>
-          <a href="#hours" data-testid="link-hours">Hours</a>
-          <a href="#contact" data-testid="link-contact">Find us</a>
-        </nav>
-        <a className="header-order" href="#order" aria-label={`View your order, ${cartCount} items`} data-testid="link-header-order"><ShoppingBag size={15} /><span className="header-order-label">Your order</span><span>{cartCount}</span></a>
-        <button className="mobile-nav-toggle" type="button" aria-label={mobileNavOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-controls="main-navigation" aria-expanded={mobileNavOpen} onClick={() => setMobileNavOpen((open) => !open)} data-testid="button-mobile-menu">
-          {mobileNavOpen ? <X size={19} /> : <MenuIcon size={19} />}
+    <div className="min-h-screen bg-[#141212] text-[#EDE8E1] font-sans pb-36">
+      {/* Top Header */}
+      <header className="sticky top-0 z-40 bg-[#1A1616]/95 backdrop-blur-md border-b border-white/5 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <img
+            src={risaLogo}
+            alt="RISA Logo"
+            className="w-10 h-10 rounded-lg object-contain bg-[#1F1A1A] p-1 border border-white/10"
+            onError={(e) => {
+              (e.target as HTMLElement).style.display = 'none';
+            }}
+          />
+          <div>
+            <h1 className="font-serif tracking-widest text-lg font-bold text-white leading-tight">RISA</h1>
+            <p className="text-[10px] tracking-[0.25em] text-[#C83832] uppercase font-semibold">CRAFTED FOR CRAVINGS</p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setIsCartOpen(true)}
+          className="w-10 h-10 rounded-xl bg-[#C83832] text-white flex items-center justify-center relative shadow-lg shadow-[#C83832]/30 active:scale-95 transition"
+        >
+          <ShoppingBag size={19} />
+          {totalCount > 0 && (
+            <span className="absolute -top-1.5 -right-1.5 bg-white text-[#C83832] font-black text-[11px] rounded-full w-5 h-5 flex items-center justify-center shadow">
+              {totalCount}
+            </span>
+          )}
         </button>
       </header>
 
-      <main>
-        <section className="hero" id="home">
-          <div className="hero-copy">
-            <div className="eyebrow">Good food. Great vibes. Always.</div>
-            <h1>Come for the craving. <em>Stay for the joy.</em></h1>
-            <p>From the first forkful of craving noodles to that last sweet spoonful. Your comfort-food kind of day starts here.</p>
-            <div className="hero-actions">
-              <a className="button-primary" href="#menu" data-testid="link-browse-menu">Find your favourite <ArrowDown size={15} /></a>
-              <a className="button-outline" href={whatsappGreetingHref} target="_blank" rel="noreferrer" data-testid="link-whatsapp-hero">Say hello on WhatsApp <ArrowRight size={14} /></a>
-            </div>
-            <div className="hero-note"><strong>Friday–Sunday</strong> <span>·</span> 12:00–20:00 <span>·</span> Made for your cravings</div>
-          </div>
-            <div className="hero-visual hero-logo-visual" aria-label="RISA Crafted for Cravings logo">
-              <div className="hero-photo"><img src={risaLogo} alt="RISA Crafted for Cravings logo with its bowl and chopstick design" /></div>
-          </div>
-        </section>
-
-        <div className="hours-ribbon" id="hours">
-          <Clock3 size={15} />
-          <strong>OPEN FRIDAY — SUNDAY</strong>
-          <span className="hours-dot" />
-          <span>12:00–20:00</span>
-          <span className="hours-dot" />
-          <span>Call / WhatsApp</span>
-          <a href={whatsappGreetingHref} className="hours-phone" target="_blank" rel="noreferrer" data-testid="link-hours-whatsapp">+233 24 128 0476</a>
+      {/* Info Banner */}
+      <div className="bg-[#1C1717] px-4 py-2 border-b border-white/5 flex flex-wrap items-center justify-between text-[11px] text-neutral-400 gap-2">
+        <div className="flex items-center gap-1.5">
+          <Clock size={12} className="text-[#C83832]" />
+          <span>Friday – Sunday: 12:00 PM – 8:00 PM</span>
         </div>
+        <div className="flex items-center gap-1.5">
+          <Phone size={12} className="text-[#C83832]" />
+          <a href="tel:0241280476" className="text-white hover:text-[#C83832] font-medium">024 128 0476</a>
+        </div>
+      </div>
 
-        <section className="menu-section" id="menu">
-          <div className="section-heading">
-            <div>
-              <div className="eyebrow">A menu for the mood</div>
-              <h2>Pick your kind<br />of delicious.</h2>
-            </div>
-            <p>Big comfort, bright flavours and little treats worth slowing down for. Choose your favourites and send your order straight to us.</p>
-          </div>
-          <div className="menu-layout">
-            <div className="menu-groups">
-              {menu.map((group, groupIndex) => (
-                <section className={`menu-group${group.photo ? '' : ' menu-group-no-photo'}`} id={group.id} key={group.id} aria-labelledby={`heading-${group.id}`}>
-                  <div className="menu-group-heading">
-                    <span className="group-index">{String(groupIndex + 1).padStart(2, '0')}</span>
-                    <h3 id={`heading-${group.id}`}>{group.name}</h3>
-                  </div>
-                  {group.photo && <img className="menu-group-photo" src={group.photo} alt={group.photoAlt ?? ''} data-testid={`img-menu-${group.id}`} />}
-                  {group.note && <p className="extras-note">{group.note}</p>}
-                  {group.items.map((product) => {
-                    const selectedOptions = selections[product.id] ?? [];
-                    return (
-                      <article className="menu-item" key={product.id} data-testid={`card-product-${product.id}`}>
-                        <div className="item-main">
-                          <div>
-                            <div className="item-name">{product.name}</div>
-                            {product.description && <div className="item-description">{product.description}</div>}
-                          </div>
-                          <div className="item-price"><span className="price-currency">GH₵</span> {product.price}</div>
-                        </div>
-                        {product.noodleBase && <div className="item-options">
-                          <div>
-                            <label className="option-label" htmlFor={`base-${product.id}`}>Choose your base</label>
-                            <select className="option-select" id={`base-${product.id}`} value={selectedOptions.find((option) => ['Noodles', 'Stir-fry pasta'].includes(option)) ?? ''} onChange={(event) => setNoodleOption(product.id, event.target.value, 'base')} data-testid={`select-base-${product.id}`}>
-                              <option value="">Choose noodles or pasta</option><option value="Noodles">Noodles</option><option value="Stir-fry pasta">Stir-fry pasta</option>
-                            </select>
-                          </div>
-                        </div>}
-                        {product.choice && <div className="item-options">
-                          {product.choice === 'wings' && <div>
-                            <label className="option-label" htmlFor={`choice-${product.id}`}>Choose a flavour</label>
-                            <select className="option-select" id={`choice-${product.id}`} value={selectedOptions[0] ?? ''} onChange={(event) => setSingleOption(product.id, event.target.value)} data-testid={`select-flavour-${product.id}`}>
-                              <option value="">Select spicy or BBQ</option><option value="Spicy">Spicy</option><option value="BBQ">BBQ</option>
-                            </select>
-                          </div>}
-                          {product.choice === 'buldak' && <div>
-                            <label className="option-label" htmlFor={`choice-${product.id}`}>Buldak flavor</label>
-                            <input className="option-select" id={`choice-${product.id}`} value={selectedOptions[0] ?? ''} onChange={(event) => setSingleOption(product.id, event.target.value)} placeholder="Tell us your flavor" data-testid={`input-flavour-${product.id}`} />
-                          </div>}
-                          {product.choice === 'sago' && <div>
-                            <label className="option-label" htmlFor={`choice-${product.id}`}>Choose a flavor</label>
-                            <select className="option-select" id={`choice-${product.id}`} value={selectedOptions[0] ?? ''} onChange={(event) => setSingleOption(product.id, event.target.value)} data-testid={`select-flavour-${product.id}`}>
-                              <option value="">Select a flavor</option><option value="Mango">Mango</option><option value="Strawberry">Strawberry</option><option value="Banana">Banana</option>
-                            </select>
-                          </div>}
-                          {product.choice === 'parfait' && <div>
-                            <label className="option-label" htmlFor={`choice-${product.id}`}>Fruit toppings (optional)</label>
-                            <input className="option-select" id={`choice-${product.id}`} value={selectedOptions[0] ?? ''} onChange={(event) => setSingleOption(product.id, event.target.value)} placeholder="Tell us your two toppings" data-testid={`input-toppings-${product.id}`} />
-                          </div>}
-                          {product.choice === 'noodle-extras' && <div>
-                            <span className="option-label">Choose one included extra</span>
-                            <div className="option-checks">
-                              {['Extra egg', 'Extra sausage'].map((option) => (
-                                <label className="option-chip" key={option}>
-                                  <input type="radio" name={`noodle-side-${product.id}`} checked={selectedOptions.includes(option)} onChange={() => setNoodleOption(product.id, option, 'side')} data-testid={`radio-${product.id}-${option.toLowerCase().replace(' ', '-')}`} /> {option} (included)
-                                </label>
-                              ))}
-                            </div>
-                          </div>}
-                        </div>}
-                        <div className="item-control">
-                          <button className="add-button" type="button" onClick={() => addProduct(product)} data-testid={`button-add-${product.id}`}>
-                            <Plus size={13} /> Add to order
-                          </button>
-                        </div>
-                      </article>
-                    );
-                  })}
-                </section>
-              ))}
-            </div>
-            <aside className="cart-panel" id="order" aria-label="Your order">
-              <div className="cart-top">
-                <div className="cart-title-row"><h3 className="cart-title">Your order</h3><span className="cart-count" data-testid="text-cart-count">{cartCount}</span></div>
-                <p className="cart-subtitle">A little something to look forward to.</p>
-              </div>
-              <div className="cart-content">
-                {!cart.length ? (
-                  <div className="cart-empty">
-                    <div className="cart-empty-mark"><ShoppingBag size={20} /></div>
-                    <strong>Your cravings start here.</strong>
-                    <span>Add a favourite from the menu and your order will show up right here.</span>
-                  </div>
-                ) : (
-                  <div className="cart-lines" aria-live="polite">
-                    {cart.map((line) => (
-                      <div className="cart-line" key={line.key} data-testid={`row-cart-${line.product.id}`}>
-                        <div className="cart-line-top"><span className="cart-line-name">{line.product.name}</span><span className="cart-line-price">{formatCedis(line.unitPrice * line.quantity)}</span></div>
-                        {line.options.length > 0 && <div className="cart-line-options">{line.options.join(' · ')}</div>}
-                        <div className="quantity-control">
-                          <button className="qty-button" type="button" aria-label={`Decrease ${line.product.name} quantity`} onClick={() => changeQuantity(line.key, -1)} data-testid={`button-minus-${line.product.id}`}><Minus size={12} /></button>
-                          <span className="qty-number" data-testid={`text-quantity-${line.product.id}`}>{line.quantity}</span>
-                          <button className="qty-button" type="button" aria-label={`Increase ${line.product.name} quantity`} onClick={() => changeQuantity(line.key, 1)} data-testid={`button-plus-${line.product.id}`}><Plus size={12} /></button>
-                          <button className="remove-button" type="button" onClick={() => removeLine(line.key)} data-testid={`button-remove-${line.product.id}`}><Trash2 size={11} /> Remove</button>
-                        </div>
-                      </div>
-                    ))}
+      {/* Category Pills Navigation */}
+      <div className="sticky top-[61px] z-30 bg-[#141212]/95 backdrop-blur-md py-3 px-4 overflow-x-auto no-scrollbar flex items-center gap-2 border-b border-white/5">
+        {categories.map((cat) => {
+          const active = activeTab === cat.id;
+          return (
+            <button
+              key={cat.id}
+              onClick={() => setActiveTab(cat.id)}
+              className={`whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all ${
+                active
+                  ? 'bg-[#C83832] text-white shadow-md shadow-[#C83832]/30'
+                  : 'bg-[#211C1C] text-neutral-400 hover:text-white border border-white/5'
+              }`}
+            >
+              {cat.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Items Section */}
+      <main className="max-w-xl mx-auto px-4 pt-6 space-y-4">
+        {displayedItems.map((item) => (
+          <div
+            key={item.id}
+            className="bg-[#1E1919] rounded-2xl border border-white/5 overflow-hidden shadow-xl"
+          >
+            {item.image && (
+              <div className="relative h-44 w-full overflow-hidden bg-black/40">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1E1919] via-transparent to-black/20" />
+
+                {item.badge && (
+                  <span className="absolute top-3 left-3 bg-[#C83832] text-white text-[9px] font-black uppercase px-2.5 py-1 rounded-full shadow">
+                    {item.badge}
+                  </span>
+                )}
+
+                {/* RISA Brand Logo Placed On Drinks & Sweet Items */}
+                {item.category === 'drinks' && (
+                  <div className="absolute top-3 right-3 bg-black/75 backdrop-blur-md border border-white/20 rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-md">
+                    <img 
+                      src={risaLogo} 
+                      alt="RISA" 
+                      className="w-3.5 h-3.5 rounded-full object-cover" 
+                      onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+                    />
+                    <span className="text-[9px] font-serif font-bold text-white tracking-widest">RISA DRINK</span>
                   </div>
                 )}
-                <div className="cart-total"><span>Estimated total</span><strong data-testid="text-order-total">{formatCedis(total)}</strong></div>
-                <p className="cart-footnote">Final amount confirmed with RISA on WhatsApp.</p>
-                <a className={`whatsapp-button ${cart.length ? '' : 'disabled'}`} href={whatsappHref} target={cart.length ? '_blank' : undefined} rel={cart.length ? 'noreferrer' : undefined} aria-disabled={!cart.length} onClick={(event) => { if (!cart.length) event.preventDefault(); }} data-testid="link-send-order">
-                  Send order on WhatsApp <ArrowRight size={15} />
-                </a>
-                <a className="cart-phone" href={cart.length ? whatsappHref : whatsappGreetingHref} target="_blank" rel="noreferrer" data-testid="link-cart-phone">+233 24 128 0476 · tap to chat</a>
               </div>
-            </aside>
-          </div>
-        </section>
+            )}
 
-        <div className="story-strip">
-          <div className="story-inner">
-            <p>“Good food, great vibes, always.” <em>That’s the RISA way.</em> Made for the little moments that call for one more bite.</p>
-            <span className="story-tag">CRAFTED FOR CRAVINGS · GHANA</span>
+            <div className="p-4 flex flex-col justify-between">
+              <div>
+                <h3 className="font-serif text-lg font-semibold text-white tracking-wide">{item.name}</h3>
+                <p className="text-xs text-neutral-400 mt-1 leading-relaxed">{item.description}</p>
+                {item.optionsNote && (
+                  <p className="text-[11px] text-[#E0A855] mt-1 font-medium">{item.optionsNote}</p>
+                )}
+                {item.flavors && (
+                  <p className="text-[11px] text-[#C83832] mt-1 font-semibold">
+                    Flavors: {item.flavors.join(' · ')}
+                  </p>
+                )}
+              </div>
+
+              <div className="mt-4 flex items-center justify-between pt-3 border-t border-white/5">
+                <span className="font-serif text-xl font-bold text-[#E54842]">
+                  GH₵{item.price}
+                </span>
+
+                {cart[item.id] ? (
+                  <div className="flex items-center gap-2 bg-[#282121] rounded-xl px-2.5 py-1.5 border border-white/10">
+                    <button
+                      onClick={() => removeFromCart(item.id)}
+                      className="w-6 h-6 flex items-center justify-center rounded bg-neutral-800 text-white active:scale-95"
+                    >
+                      <Minus size={13} />
+                    </button>
+                    <span className="w-5 text-center text-xs font-bold text-white font-mono">
+                      {cart[item.id]}
+                    </span>
+                    <button
+                      onClick={() => addToCart(item.id)}
+                      className="w-6 h-6 flex items-center justify-center rounded bg-[#C83832] text-white active:scale-95"
+                    >
+                      <Plus size={13} />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => addToCart(item.id)}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#282121] hover:bg-[#C83832] text-white text-xs font-semibold border border-white/10 transition-colors active:scale-95"
+                  >
+                    <Plus size={14} />
+                    <span>Add</span>
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
+        ))}
       </main>
 
-      <footer className="footer" id="contact">
-        <div className="footer-inner">
-          <div className="footer-brand">
-            <a className="brand" href="#home" data-testid="link-footer-home"><span className="brand-mark">R</span><span><span className="brand-name">RISA</span><span className="brand-sub">CRAFTED FOR CRAVINGS</span></span></a>
+      {/* Floating Bottom Cart Bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#161212]/95 backdrop-blur-md border-t border-white/10 px-4 py-3">
+        <div className="max-w-xl mx-auto flex items-center justify-between">
+          <div>
+            <p className="font-serif text-lg font-bold text-white leading-tight">GH₵{totalPrice}</p>
+            <p className="text-[11px] text-neutral-400">
+              {totalCount === 0 ? 'Your order is waiting' : `${totalCount} item(s) selected`}
+            </p>
           </div>
-          <div className="footer-meta">
-            <div><small>Come through</small><strong>Friday–Sunday · 12:00–20:00</strong></div>
-            <div><small>Call / WhatsApp</small><a href={whatsappGreetingHref} target="_blank" rel="noreferrer" data-testid="link-footer-phone">+233 24 128 0476</a></div>
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="px-5 py-2.5 rounded-xl bg-[#C83832] hover:bg-[#b02f2a] text-white text-xs font-bold tracking-wider uppercase flex items-center gap-2 shadow-lg shadow-[#C83832]/30 active:scale-95 transition-all"
+          >
+            <span>View menu / Cart</span>
+            <ArrowRight size={15} />
+          </button>
+        </div>
+      </div>
+
+      {/* Cart & WhatsApp Checkout Modal */}
+      {isCartOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="bg-[#181313] w-full max-w-lg rounded-t-3xl sm:rounded-3xl border border-white/10 max-h-[90vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom-5">
+            {/* Header */}
+            <div className="p-4 border-b border-white/10 flex items-center justify-between">
+              <div>
+                <h2 className="font-serif text-lg font-bold text-white">Your Craving Bag</h2>
+                <p className="text-xs text-neutral-400">RISA · Friday to Sunday 12:00–8:00 PM</p>
+              </div>
+              <button
+                onClick={() => setIsCartOpen(false)}
+                className="w-8 h-8 rounded-full bg-neutral-800 text-neutral-300 flex items-center justify-center hover:text-white"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* List */}
+            <div className="p-4 overflow-y-auto space-y-4">
+              {totalCount === 0 ? (
+                <div className="text-center py-10">
+                  <ShoppingBag size={32} className="mx-auto text-neutral-600 mb-2" />
+                  <p className="text-neutral-400 text-sm">Your craving bag is empty.</p>
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-2.5">
+                    {Object.entries(cart).map(([id, qty]) => {
+                      const item = MENU_ITEMS.find((m) => m.id === id);
+                      if (!item) return null;
+                      return (
+                        <div key={id} className="flex items-center justify-between bg-[#211A1A] p-3 rounded-xl border border-white/5">
+                          <div className="flex-1 pr-3">
+                            <h4 className="text-sm font-semibold text-white">{item.name}</h4>
+                            <p className="text-xs text-[#E54842] font-mono mt-0.5">GH₵{item.price * qty}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => removeFromCart(id)}
+                              className="w-6 h-6 rounded bg-neutral-800 text-white flex items-center justify-center"
+                            >
+                              <Minus size={12} />
+                            </button>
+                            <span className="text-xs font-mono font-bold w-4 text-center">{qty}</span>
+                            <button
+                              onClick={() => addToCart(id)}
+                              className="w-6 h-6 rounded bg-[#C83832] text-white flex items-center justify-center"
+                            >
+                              <Plus size={12} />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Pick up or Delivery */}
+                  <div>
+                    <label className="text-xs font-medium text-neutral-300 block mb-1.5">Order Type</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {(['Delivery', 'Pick up'] as const).map((type) => (
+                        <button
+                          key={type}
+                          onClick={() => setOrderType(type)}
+                          className={`py-2 rounded-xl text-xs font-semibold border ${
+                            orderType === type
+                              ? 'bg-[#C83832] text-white border-[#C83832]'
+                              : 'bg-[#211A1A] text-neutral-400 border-white/5'
+                          }`}
+                        >
+                          {type}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Spice Level */}
+                  <div>
+                    <label className="text-xs font-medium text-neutral-300 block mb-1.5">Spice Level</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {(['Mild', 'Spicy', 'Hot'] as const).map((spice) => (
+                        <button
+                          key={spice}
+                          onClick={() => setSpiceLevel(spice)}
+                          className={`py-2 rounded-xl text-xs font-semibold border ${
+                            spiceLevel === spice
+                              ? 'bg-[#C83832] text-white border-[#C83832]'
+                              : 'bg-[#211A1A] text-neutral-400 border-white/5'
+                          }`}
+                        >
+                          {spice}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Allergy Notice */}
+                  <div>
+                    <label className="text-xs font-medium text-neutral-300 flex items-center gap-1 mb-1.5">
+                      <AlertCircle size={13} className="text-[#C83832]" />
+                      <span>Kindly let us know if you are allergic to something:</span>
+                    </label>
+                    <textarea
+                      value={allergyNote}
+                      onChange={(e) => setAllergyNote(e.target.value)}
+                      placeholder="e.g. No shellfish, delivery location details..."
+                      rows={2}
+                      className="w-full bg-[#211A1A] border border-white/10 rounded-xl p-3 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-[#C83832]"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Footer */}
+            {totalCount > 0 && (
+              <div className="p-4 border-t border-white/10 bg-[#1A1515]">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-xs text-neutral-400">Total payable</span>
+                  <span className="font-serif text-2xl font-bold text-white">GH₵{totalPrice}</span>
+                </div>
+                <button
+                  onClick={sendWhatsAppOrder}
+                  className="w-full py-3.5 rounded-xl bg-[#25D366] hover:bg-[#20b858] text-black font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#25D366]/20 active:scale-98 transition"
+                >
+                  <Send size={16} />
+                  <span>Send Order to WhatsApp (024 128 0476)</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
-        <div className="footer-bottom"><span>Good food. Great vibes. Always.</span><span>RISA · Crafted for cravings</span></div>
-      </footer>
-      <div className="mobile-spacer" />
-      <div className="mobile-cart-bar">
-        <div className="mobile-cart-summary"><strong>{formatCedis(total)}</strong><span>{cartCount ? `${cartCount} ${cartCount === 1 ? 'item' : 'items'} in your order` : 'Your order is waiting'}</span></div>
-        <a href={cart.length ? whatsappHref : '#order'} target={cart.length ? '_blank' : undefined} rel={cart.length ? 'noreferrer' : undefined} onClick={(event) => { if (!cart.length) { event.preventDefault(); document.getElementById('order')?.scrollIntoView({ behavior: 'smooth' }); } }} data-testid="link-mobile-order">
-          {cart.length ? 'Order on WhatsApp' : 'View your order'} <ArrowRight size={14} />
-        </a>
-      </div>
-      {toast && <div className="toast-message" role="status" data-testid="status-added-to-cart">{toast}</div>}
+      )}
     </div>
   );
 }
-
-export default App;
