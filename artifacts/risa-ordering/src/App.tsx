@@ -2,13 +2,17 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   AlertCircle,
   ArrowRight,
+  ArrowUp,
   Bike,
   Clock,
+  CloudRain,
+  Info,
+  MessageCircle,
   Minus,
-  Phone,
   Plus,
   Send,
   ShoppingBag,
+  Sparkles,
   X,
 } from 'lucide-react';
 
@@ -27,9 +31,11 @@ import soboloPhoto from './assets/menu-photos/sobolo-risa.jpg';
 import friesPhoto from './assets/menu-photos/fries-risa.jpg';
 import bavariaPhoto from './assets/menu-photos/bavaria-malt.jpg';
 
-const PHONE_DISPLAY = '024 128 0476';
-const PHONE_TEL = '0241280476';
+const PHONE_DISPLAY = '+233 24 128 0476';
 const WHATSAPP = '233241280476';
+// Tapping the RISA number anywhere opens a WhatsApp chat with it.
+const WHATSAPP_CHAT = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent('Hi RISA, I would like to place an order.')}`;
+const POLICY_SEEN_KEY = 'risa-order-info-seen';
 
 interface Product {
   id: string;
@@ -293,6 +299,34 @@ export default function App() {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [showErrors, setShowErrors] = useState(false);
+  const [showPolicy, setShowPolicy] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  // Show the ordering info once per visitor.
+  useEffect(() => {
+    let seen = false;
+    try {
+      seen = localStorage.getItem(POLICY_SEEN_KEY) === '1';
+    } catch {
+      /* storage unavailable */
+    }
+    if (!seen) setShowPolicy(true);
+  }, []);
+
+  const closePolicy = () => {
+    setShowPolicy(false);
+    try {
+      localStorage.setItem(POLICY_SEEN_KEY, '1');
+    } catch {
+      /* storage unavailable */
+    }
+  };
+
+  useEffect(() => {
+    const onScroll = () => setShowBackToTop(window.scrollY > 700);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const pillsRef = useRef<HTMLDivElement>(null);
   const clickScrolling = useRef(false);
@@ -324,8 +358,8 @@ export default function App() {
   }, [activeSection]);
 
   useEffect(() => {
-    document.body.style.overflow = isCartOpen ? 'hidden' : '';
-  }, [isCartOpen]);
+    document.body.style.overflow = isCartOpen || showPolicy ? 'hidden' : '';
+  }, [isCartOpen, showPolicy]);
 
   const jumpTo = (id: string) => {
     const el = document.getElementById(id);
@@ -426,6 +460,40 @@ export default function App() {
         </div>
       </header>
 
+      {/* Welcome banner */}
+      <section className="relative overflow-hidden">
+        <img src={noodlesPhoto} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/65 to-[#141111]" />
+        <div className="relative max-w-2xl mx-auto px-4 pt-12 pb-10 text-center">
+          <img
+            src={risaLogo}
+            alt="RISA logo"
+            className="w-24 h-24 mx-auto rounded-full object-cover border-2 border-[#E3B062]/70 shadow-2xl"
+          />
+          <h1 className="font-display text-5xl font-semibold tracking-[0.12em] text-white mt-5">RISA</h1>
+          <p className="font-display text-xs font-semibold tracking-[0.35em] text-[#F0C47A] mt-2 [text-shadow:0_1px_8px_rgba(0,0,0,0.9)]">CRAFTED FOR CRAVINGS</p>
+          <p className="text-[15px] text-neutral-200 mt-4">Salad bowls · Noodles · Wings · Sweets</p>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <button
+              onClick={() => jumpTo(MENU[0].id)}
+              className="h-12 px-6 rounded-full bg-[#C23B33] text-white font-medium flex items-center gap-2 active:scale-95 transition"
+            >
+              See menu
+              <ArrowRight size={17} />
+            </button>
+            <a
+              href={WHATSAPP_CHAT}
+              target="_blank"
+              rel="noreferrer"
+              className="h-12 px-6 rounded-full border border-white/40 bg-black/30 backdrop-blur text-white font-medium flex items-center gap-2"
+            >
+              <MessageCircle size={17} />
+              WhatsApp us
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Category pills */}
       <nav className="sticky top-16 z-30 bg-[#141111]/95 backdrop-blur-md border-b border-white/5">
         <div ref={pillsRef} className="relative max-w-2xl mx-auto px-4 py-3 flex gap-2 overflow-x-auto no-scrollbar">
@@ -449,7 +517,7 @@ export default function App() {
 
       <main id="top" className="max-w-2xl mx-auto px-4">
         {/* Info strip */}
-        <div className="mt-5 grid grid-cols-3 gap-2 text-center">
+        <div className="mt-2 grid grid-cols-3 gap-2 text-center">
           <div className="rounded-xl bg-[#1D1818] border border-white/5 py-3 px-2">
             <Clock size={15} className="mx-auto text-[#E0544B]" />
             <p className="text-[11px] text-white font-medium mt-1.5">Fri – Sun</p>
@@ -460,9 +528,14 @@ export default function App() {
             <p className="text-[11px] text-white font-medium mt-1.5">Pick up &</p>
             <p className="text-[11px] text-neutral-400">delivery</p>
           </div>
-          <a href={`tel:${PHONE_TEL}`} className="rounded-xl bg-[#1D1818] border border-white/5 py-3 px-2 block">
-            <Phone size={15} className="mx-auto text-[#E0544B]" />
-            <p className="text-[11px] text-white font-medium mt-1.5">Call / WhatsApp</p>
+          <a
+            href={WHATSAPP_CHAT}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-xl bg-[#1D1818] border border-white/5 py-3 px-2 block"
+          >
+            <MessageCircle size={15} className="mx-auto text-[#25D366]" />
+            <p className="text-[11px] text-white font-medium mt-1.5">WhatsApp to order</p>
             <p className="text-[11px] text-neutral-400">{PHONE_DISPLAY}</p>
           </a>
         </div>
@@ -473,7 +546,10 @@ export default function App() {
             <p className="text-neutral-400 mt-1">{section.tagline}</p>
 
             {section.photo && (
-              <div className="mt-5 rounded-3xl overflow-hidden border border-white/5 aspect-[16/10] bg-[#1D1818]">
+              <div className="relative mt-5 rounded-3xl overflow-hidden border border-white/5 aspect-[16/10] bg-[#1D1818]">
+                <span className="absolute top-3 left-3 z-10 text-[11px] font-semibold uppercase tracking-wider text-white bg-black/55 backdrop-blur px-3 py-1 rounded-full">
+                  {section.label}
+                </span>
                 <img
                   src={section.photo}
                   alt={section.title}
@@ -502,7 +578,7 @@ export default function App() {
                             {item.badge}
                           </span>
                         )}
-                        <h3 className="font-serif text-xl font-semibold text-white leading-snug">{item.name}</h3>
+                        <h3 className="font-display text-[17px] font-semibold tracking-wide text-white leading-snug uppercase">{item.name}</h3>
                         {item.description && (
                           <p className="text-[15px] text-neutral-400 mt-1.5 leading-relaxed">{item.description}</p>
                         )}
@@ -540,11 +616,11 @@ export default function App() {
                     <div className="mt-4 flex items-center justify-between">
                       <span className="font-serif text-2xl font-bold text-[#E0544B]">{money(item.price)}</span>
                       {qty ? (
-                        <div className="flex items-center gap-3 bg-[#2C2525] rounded-xl p-1 border border-white/10">
+                        <div className="flex items-center gap-3 bg-[#2C2525] rounded-full p-1 border border-white/10">
                           <button
                             onClick={() => remove(key)}
                             aria-label={`Remove one ${item.name}`}
-                            className="w-9 h-9 rounded-lg flex items-center justify-center text-white hover:bg-white/10"
+                            className="w-9 h-9 rounded-full flex items-center justify-center text-white hover:bg-white/10"
                           >
                             <Minus size={16} />
                           </button>
@@ -552,7 +628,7 @@ export default function App() {
                           <button
                             onClick={() => add(key)}
                             aria-label={`Add one more ${item.name}`}
-                            className="w-9 h-9 rounded-lg flex items-center justify-center bg-[#C23B33] text-white"
+                            className="w-9 h-9 rounded-full flex items-center justify-center bg-[#C23B33] text-white"
                           >
                             <Plus size={16} />
                           </button>
@@ -560,7 +636,7 @@ export default function App() {
                       ) : (
                         <button
                           onClick={() => add(key)}
-                          className="flex items-center gap-2 px-5 h-11 rounded-xl bg-[#2C2525] border border-white/10 text-white font-medium hover:bg-[#C23B33] hover:border-[#C23B33] active:scale-95 transition"
+                          className="flex items-center gap-2 px-5 h-11 rounded-full bg-transparent border border-white/25 text-white font-medium hover:bg-[#C23B33] hover:border-[#C23B33] active:scale-95 transition"
                         >
                           <Plus size={16} />
                           Add
@@ -588,14 +664,171 @@ export default function App() {
           </div>
         </section>
 
-        <footer className="pt-10 pb-6 text-center text-sm text-neutral-500">
-          <p className="font-serif text-lg text-white">RISA</p>
-          <p className="mt-1">Friday – Sunday · 12:00 – 8:00pm · Pick up & delivery</p>
-          <a href={`tel:${PHONE_TEL}`} className="mt-1 inline-block text-neutral-300">
-            Call / WhatsApp {PHONE_DISPLAY}
-          </a>
-        </footer>
+        <button
+          onClick={() => setShowPolicy(true)}
+          className="mt-3 w-full rounded-2xl border border-white/10 py-3 text-sm text-neutral-300 flex items-center justify-center gap-2"
+        >
+          <Info size={16} /> Ordering & delivery info
+        </button>
       </main>
+
+      {/* Footer */}
+      <footer className="mt-12 bg-[#0F0D0D] border-t border-white/5">
+        <div className="max-w-2xl mx-auto px-4 py-10">
+          <div className="flex items-center gap-3">
+            <img src={risaLogo} alt="" className="w-12 h-12 rounded-full object-cover border border-[#E3B062]/50" />
+            <div>
+              <p className="font-display text-2xl font-semibold tracking-[0.12em] text-white leading-none">RISA</p>
+              <p className="font-display text-[10px] tracking-[0.3em] text-[#E3B062] mt-1">CRAFTED FOR CRAVINGS</p>
+            </div>
+          </div>
+          <p className="text-neutral-400 mt-4 leading-relaxed">
+            Ghanaian salad bowls, loaded noodles and stir-fry pasta, wings and sweet treats — made fresh for every
+            order.
+          </p>
+
+          <div className="grid grid-cols-2 gap-6 mt-8 text-sm">
+            <div>
+              <p className="font-display text-xs tracking-[0.25em] text-[#E3B062] mb-3">MENU</p>
+              <ul className="space-y-2">
+                {MENU.map((s) => (
+                  <li key={s.id}>
+                    <button onClick={() => jumpTo(s.id)} className="text-neutral-300 hover:text-white">
+                      {s.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="font-display text-xs tracking-[0.25em] text-[#E3B062] mb-3">VISIT & ORDER</p>
+              <ul className="space-y-3 text-neutral-300">
+                <li>
+                  <a href={WHATSAPP_CHAT} target="_blank" rel="noreferrer" className="flex gap-2 hover:text-white">
+                    <MessageCircle size={16} className="text-[#25D366] shrink-0 mt-0.5" />
+                    <span>
+                      WhatsApp
+                      <br />
+                      {PHONE_DISPLAY}
+                    </span>
+                  </a>
+                </li>
+                <li className="flex gap-2">
+                  <Clock size={16} className="text-[#E0544B] shrink-0 mt-0.5" />
+                  <span>
+                    Friday – Sunday
+                    <br />
+                    12:00 – 8:00pm
+                  </span>
+                </li>
+                <li className="flex gap-2">
+                  <Bike size={16} className="text-[#E0544B] shrink-0 mt-0.5" />
+                  <span>Pick up & delivery in Accra</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-10 pt-5 border-t border-white/10 flex items-center justify-between text-xs text-neutral-500">
+            <span>© {new Date().getFullYear()} RISA. All rights reserved.</span>
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="flex items-center gap-1 text-neutral-300"
+            >
+              Back to top <ArrowUp size={13} />
+            </button>
+          </div>
+        </div>
+      </footer>
+
+      {/* Back to top */}
+      {showBackToTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="Back to top"
+          className="fixed right-4 bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-30 w-10 h-10 rounded-full bg-[#141111]/90 border border-white/20 text-white shadow-lg shadow-black/50 flex items-center justify-center active:scale-95 transition"
+        >
+          <ArrowUp size={18} />
+        </button>
+      )}
+
+      {/* Ordering info popup */}
+      {showPolicy && (
+        <div
+          className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={closePolicy}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-md max-h-[88vh] overflow-y-auto rounded-3xl bg-[#1B1616] border border-white/10 p-6"
+          >
+            <button
+              onClick={closePolicy}
+              aria-label="Close"
+              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center"
+            >
+              <X size={18} />
+            </button>
+            <img src={risaLogo} alt="" className="w-14 h-14 mx-auto rounded-full object-cover border border-[#E3B062]/60" />
+            <h2 className="font-display text-center text-lg font-semibold tracking-[0.1em] text-white mt-3">
+              RISA ORDERING INFO
+            </h2>
+            <p className="text-center text-sm text-neutral-400 mt-2">
+              Every order is made fresh for you, so please allow a little time for preparation.
+            </p>
+            <div className="mt-5 space-y-2.5">
+              {[
+                { icon: Clock, title: 'Opening hours', text: 'Friday – Sunday, 12:00 – 8:00pm.' },
+                {
+                  icon: Sparkles,
+                  title: 'Made fresh',
+                  text: 'We cook each order when it comes in. Busy times may take a little longer.',
+                },
+                {
+                  icon: Bike,
+                  title: 'Pick up & delivery',
+                  text: 'Delivery is available in Accra. The delivery fee depends on your location and is confirmed on WhatsApp.',
+                },
+                {
+                  icon: CloudRain,
+                  title: 'Weather delays',
+                  text: 'Heavy rain can delay delivery riders. Thank you for your patience.',
+                },
+                {
+                  icon: AlertCircle,
+                  title: 'Allergies',
+                  text: 'Kindly let us know if you are allergic to something.',
+                },
+              ].map(({ icon: Icon, title, text }) => (
+                <div key={title} className="flex gap-3 rounded-2xl border border-white/10 p-3">
+                  <span className="w-9 h-9 shrink-0 rounded-full bg-[#C23B33]/15 text-[#E0544B] flex items-center justify-center">
+                    <Icon size={17} />
+                  </span>
+                  <div>
+                    <p className="font-display text-xs font-semibold tracking-[0.12em] text-white uppercase">{title}</p>
+                    <p className="text-sm text-neutral-400 mt-0.5">{text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <a
+              href={WHATSAPP_CHAT}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-5 rounded-2xl bg-[#E3B062]/10 border border-[#E3B062]/30 p-4 text-sm text-[#F0D3A0] flex gap-2"
+            >
+              <MessageCircle size={17} className="shrink-0 mt-0.5" />
+              Questions? WhatsApp us on {PHONE_DISPLAY}.
+            </a>
+            <button
+              onClick={closePolicy}
+              className="mt-4 w-full h-12 rounded-full bg-[#C23B33] text-white font-medium"
+            >
+              Start ordering
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Bottom order bar */}
       <div className="fixed bottom-0 inset-x-0 z-40 bg-[#191515]/95 backdrop-blur-md border-t border-white/10">
