@@ -21,6 +21,10 @@ import kenkeyPhoto from './assets/menu-photos/kenkey-risa.jpg';
 import pineapplePhoto from './assets/menu-photos/pineapple-risa.jpg';
 import sagoPhoto from './assets/menu-photos/sago-square.jpg';
 import parfaitPhoto from './assets/menu-photos/parfait-risa.jpg';
+import pennePhoto from './assets/menu-photos/penne-risa.jpg';
+import gizdodoPhoto from './assets/menu-photos/gizdodo-risa.jpg';
+import soboloPhoto from './assets/menu-photos/sobolo-risa.jpg';
+import friesPhoto from './assets/menu-photos/fries-risa.jpg';
 
 const PHONE_DISPLAY = '024 128 0476';
 const PHONE_TEL = '0241280476';
@@ -141,6 +145,7 @@ const MENU: Section[] = [
     label: 'Penne Pasta',
     title: 'Penne Pasta Bowl',
     tagline: 'Comfort in a bowl.',
+    photo: pennePhoto,
     items: [
       { id: 'penne-small', name: 'Small Bowl', price: 40 },
       {
@@ -156,6 +161,7 @@ const MENU: Section[] = [
     label: 'Gizdodo',
     title: 'Gizdodo',
     tagline: 'Gizzard and plantain, done right.',
+    photo: gizdodoPhoto,
     items: [
       { id: 'gizdodo-small', name: 'Small Pack', price: 40 },
       {
@@ -213,7 +219,7 @@ const MENU: Section[] = [
         description: 'Refreshing & creamy.',
         thumb: kenkeyPhoto,
       },
-      { id: 'drink-sobolo', name: 'Sobolo', price: 10, description: 'Chilled hibiscus drink.' },
+      { id: 'drink-sobolo', name: 'Sobolo', price: 10, description: 'Chilled hibiscus drink.', thumb: soboloPhoto },
       {
         id: 'drink-pineapple',
         name: 'Pineapple Juice',
@@ -247,7 +253,7 @@ const MENU: Section[] = [
       { id: 'extra-sausage', name: 'Sausage', price: 5 },
       { id: 'extra-egg', name: 'Egg', price: 5 },
       { id: 'extra-chicken', name: 'Chicken', price: 15 },
-      { id: 'extra-fries', name: 'Fries', price: 25 },
+      { id: 'extra-fries', name: 'Fries', price: 25, thumb: friesPhoto },
     ],
   },
 ];
