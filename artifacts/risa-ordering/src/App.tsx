@@ -25,6 +25,7 @@ import kenkeyPhoto from './assets/menu-photos/kenkey-risa.jpg';
 import pineapplePhoto from './assets/menu-photos/pineapple-risa.jpg';
 import sagoPhoto from './assets/menu-photos/sago-square.jpg';
 import parfaitPhoto from './assets/menu-photos/parfait-risa.jpg';
+import noodlesSectionPhoto from './assets/menu-photos/noodles-ghana.jpg';
 import pennePhoto from './assets/menu-photos/penne-risa.jpg';
 import gizdodoPhoto from './assets/menu-photos/gizdodo-risa.jpg';
 import soboloPhoto from './assets/menu-photos/sobolo-risa.jpg';
@@ -100,7 +101,7 @@ const MENU: Section[] = [
     label: 'Noodles / Stir Fry',
     title: 'Noodles / Stir Fry Pasta',
     tagline: 'The cravings that started it all.',
-    photo: noodlesPhoto,
+    photo: noodlesSectionPhoto,
     items: [
       {
         id: 'noodles-regular',
@@ -560,7 +561,7 @@ export default function App() {
             <p className="text-neutral-400 mt-1">{section.tagline}</p>
 
             {section.photo && (
-              <div className="relative mt-5 rounded-3xl overflow-hidden border border-white/5 aspect-[16/10] bg-[#1D1818]">
+              <div className="relative mt-5 rounded-3xl overflow-hidden border border-white/5 aspect-[4/3] bg-[#1D1818]">
                 <span className="absolute top-3 left-3 z-10 text-[11px] font-semibold uppercase tracking-wider text-white bg-black/55 backdrop-blur px-3 py-1 rounded-full">
                   {section.label}
                 </span>
