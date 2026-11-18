@@ -504,9 +504,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#141111] text-[#EDE6DF] font-sans pb-28">
+    <div className="min-h-screen bg-[#F6F0E6] text-[#1F3A2B] font-sans pb-28">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-[#191515]/95 backdrop-blur-md border-b border-white/5">
+      <header className="sticky top-0 z-40 bg-[#FFFCF7]/95 backdrop-blur-md border-b border-[#1F3A2B]/10">
         <div className="max-w-2xl mx-auto px-4 h-16 flex items-center justify-between">
           <a
             href="#top"
@@ -516,13 +516,13 @@ export default function App() {
             <img
               src={risaLogo}
               alt=""
-              className="w-10 h-10 rounded-xl object-cover border border-white/10"
+              className="w-10 h-10 rounded-xl object-cover border border-[#1F3A2B]/15"
             />
             <div>
-              <p className="font-serif text-xl font-bold tracking-wide text-white leading-none">
+              <p className="font-serif text-xl font-bold tracking-wide text-[#1F3A2B] leading-none">
                 RISA
               </p>
-              <p className="font-mono text-[10px] tracking-[0.22em] text-neutral-400 mt-1">
+              <p className="font-mono text-[10px] tracking-[0.22em] text-[#5F6F63] mt-1">
                 CRAFTED FOR CRAVINGS
               </p>
             </div>
@@ -530,11 +530,11 @@ export default function App() {
           <button
             onClick={() => setIsCartOpen(true)}
             aria-label="Open your order"
-            className="relative w-12 h-10 rounded-xl bg-[#C23B33] text-white flex items-center justify-center active:scale-95 transition"
+            className="relative w-12 h-10 rounded-xl bg-[#D46A35] text-white flex items-center justify-center active:scale-95 transition"
           >
             <ShoppingBag size={19} />
             {totalCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-white text-[#C23B33] text-[11px] font-bold rounded-full min-w-5 h-5 px-1 flex items-center justify-center">
+              <span className="absolute -top-1.5 -right-1.5 bg-[#1F3A2B] text-white text-[11px] font-bold rounded-full min-w-5 h-5 px-1 flex items-center justify-center">
                 {totalCount}
               </span>
             )}
@@ -543,32 +543,33 @@ export default function App() {
       </header>
 
       {/* Welcome banner */}
-      <section className="relative overflow-hidden">
-        <img
-          src={noodlesPhoto}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/65 to-[#141111]" />
-        <div className="relative max-w-2xl mx-auto px-4 pt-12 pb-10 text-center">
-          <img
-            src={risaLogo}
-            alt="RISA logo"
-            className="w-24 h-24 mx-auto rounded-full object-cover border-2 border-[#E3B062]/70 shadow-2xl"
+      <section className="relative overflow-hidden bg-[#E4EADC]">
+        <svg
+          aria-hidden="true"
+          className="absolute -top-10 -right-24 w-[520px] h-[520px] text-[#C9D5BE]"
+          viewBox="0 0 200 200"
+        >
+          <path
+            fill="currentColor"
+            d="M44.7,-58.4C57.1,-49.5,66,-35.4,70.6,-19.8C75.2,-4.2,75.5,12.9,68.6,26.6C61.7,40.3,47.6,50.6,32.6,57.9C17.6,65.2,1.7,69.5,-15.5,68.4C-32.7,67.3,-51.2,60.8,-61.6,47.8C-72,34.8,-74.3,15.3,-71,-2.6C-67.7,-20.5,-58.8,-36.8,-45.7,-45.6C-32.6,-54.4,-16.3,-55.7,0.3,-56.1C16.9,-56.5,32.3,-67.3,44.7,-58.4Z"
+            transform="translate(100 100)"
           />
-          <h1 className="font-display text-5xl font-semibold tracking-[0.12em] text-white mt-5">
-            RISA
+        </svg>
+        <div className="relative max-w-2xl mx-auto px-4 pt-8 pb-14">
+          <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#D46A35] uppercase">
+            <span className="w-6 h-px bg-[#D46A35]" /> Crafted for cravings
+          </p>
+          <h1 className="font-serif text-[40px] leading-[1.1] font-bold text-[#1F3A2B] mt-3">
+            Food you’ll crave from the very first bite
           </h1>
-          <p className="font-display text-xs font-semibold tracking-[0.35em] text-[#F0C47A] mt-2 [text-shadow:0_1px_8px_rgba(0,0,0,0.9)]">
-            CRAFTED FOR CRAVINGS
+          <p className="text-[15px] text-[#5F6F63] mt-3 max-w-md">
+            Ghanaian salad bowls, loaded noodles, wings and sweet treats — made fresh, ready for pick up or
+            delivery.
           </p>
-          <p className="text-[15px] text-neutral-200 mt-4">
-            Salad bowls · Noodles · Wings · Sweets
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <div className="mt-6 flex flex-wrap gap-3">
             <button
               onClick={() => jumpTo(MENU[0].id)}
-              className="h-12 px-6 rounded-full bg-[#C23B33] text-white font-medium flex items-center gap-2 active:scale-95 transition"
+              className="h-12 px-6 rounded-full bg-[#D46A35] text-[#1F3A2B] font-medium flex items-center gap-2 shadow-lg shadow-[#D46A35]/25 active:scale-95 transition"
             >
               See menu
               <ArrowRight size={17} />
@@ -577,17 +578,35 @@ export default function App() {
               href={WHATSAPP_CHAT}
               target="_blank"
               rel="noreferrer"
-              className="h-12 px-6 rounded-full border border-white/40 bg-black/30 backdrop-blur text-white font-medium flex items-center gap-2"
+              className="h-12 px-6 rounded-full border border-[#1F3A2B]/20 bg-[#FFFCF7] text-[#1F3A2B] font-medium flex items-center gap-2"
             >
-              <MessageCircle size={17} />
+              <MessageCircle size={17} className="text-[#25D366]" />
               WhatsApp us
             </a>
           </div>
+          <div className="relative mt-8">
+            <div className="rounded-[2rem] overflow-hidden bg-[#C9D5BE] shadow-[0_20px_40px_rgba(31,58,43,0.15)] aspect-[4/3]">
+              <img src={noodlesPhoto} alt="RISA noodles" className="w-full h-full object-cover" />
+            </div>
+            <img
+              src={risaLogo}
+              alt="RISA logo"
+              className="absolute -bottom-6 right-5 w-20 h-20 rounded-full object-cover border-4 border-[#E4EADC] shadow-lg"
+            />
+          </div>
         </div>
+        <svg
+          aria-hidden="true"
+          className="absolute bottom-0 left-0 w-full h-10 text-[#F6F0E6]"
+          viewBox="0 0 1440 80"
+          preserveAspectRatio="none"
+        >
+          <path fill="currentColor" d="M0,40 C240,90 480,0 720,30 C960,60 1200,10 1440,40 L1440,80 L0,80 Z" />
+        </svg>
       </section>
 
       {/* Category pills */}
-      <nav className="sticky top-16 z-30 bg-[#141111]/95 backdrop-blur-md border-b border-white/5">
+      <nav className="sticky top-16 z-30 bg-[#F6F0E6]/95 backdrop-blur-md border-b border-[#1F3A2B]/10">
         <div
           ref={pillsRef}
           className="relative max-w-2xl mx-auto px-4 py-3 flex gap-2 overflow-x-auto no-scrollbar"
@@ -601,8 +620,8 @@ export default function App() {
                 onClick={() => jumpTo(s.id)}
                 className={`whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
                   active
-                    ? "bg-[#C23B33] text-white"
-                    : "bg-[#221D1D] text-neutral-400 hover:text-white"
+                    ? "bg-[#D46A35] text-white"
+                    : "bg-[#EFE8DC] text-[#5F6F63] hover:text-[#1F3A2B]"
                 }`}
               >
                 {s.label}
@@ -615,43 +634,43 @@ export default function App() {
       <main id="top" className="max-w-2xl mx-auto px-4">
         {/* Info strip */}
         <div className="mt-2 grid grid-cols-3 gap-2 text-center">
-          <div className="rounded-xl bg-[#1D1818] border border-white/5 py-3 px-2">
-            <Clock size={15} className="mx-auto text-[#E0544B]" />
-            <p className="text-[11px] text-white font-medium mt-1.5">
+          <div className="rounded-xl bg-[#FFFCF7] border border-[#1F3A2B]/10 py-3 px-2">
+            <Clock size={15} className="mx-auto text-[#C2562A]" />
+            <p className="text-[11px] text-[#1F3A2B] font-medium mt-1.5">
               Fri – Sun
             </p>
-            <p className="text-[11px] text-neutral-400">12:00 – 8:00pm</p>
+            <p className="text-[11px] text-[#5F6F63]">12:00 – 8:00pm</p>
           </div>
-          <div className="rounded-xl bg-[#1D1818] border border-white/5 py-3 px-2">
-            <Bike size={15} className="mx-auto text-[#E0544B]" />
-            <p className="text-[11px] text-white font-medium mt-1.5">
+          <div className="rounded-xl bg-[#FFFCF7] border border-[#1F3A2B]/10 py-3 px-2">
+            <Bike size={15} className="mx-auto text-[#C2562A]" />
+            <p className="text-[11px] text-[#1F3A2B] font-medium mt-1.5">
               Pick up &
             </p>
-            <p className="text-[11px] text-neutral-400">delivery</p>
+            <p className="text-[11px] text-[#5F6F63]">delivery</p>
           </div>
           <a
             href={WHATSAPP_CHAT}
             target="_blank"
             rel="noreferrer"
-            className="rounded-xl bg-[#1D1818] border border-white/5 py-3 px-2 block"
+            className="rounded-xl bg-[#FFFCF7] border border-[#1F3A2B]/10 py-3 px-2 block"
           >
             <MessageCircle size={15} className="mx-auto text-[#25D366]" />
-            <p className="text-[11px] text-white font-medium mt-1.5">
+            <p className="text-[11px] text-[#1F3A2B] font-medium mt-1.5">
               WhatsApp to order
             </p>
-            <p className="text-[11px] text-neutral-400">{PHONE_DISPLAY}</p>
+            <p className="text-[11px] text-[#5F6F63]">{PHONE_DISPLAY}</p>
           </a>
         </div>
 
         {MENU.map((section) => (
           <section key={section.id} id={section.id} className="pt-10">
-            <h2 className="font-serif text-[32px] leading-tight font-bold text-white">
+            <h2 className="font-serif text-[32px] leading-tight font-bold text-[#1F3A2B]">
               {section.title}
             </h2>
-            <p className="text-neutral-400 mt-1">{section.tagline}</p>
+            <p className="text-[#5F6F63] mt-1">{section.tagline}</p>
 
             {section.photo && (
-              <div className="relative mt-5 rounded-3xl overflow-hidden border border-white/5 aspect-[4/3] bg-[#1D1818]">
+              <div className="relative mt-5 rounded-3xl overflow-hidden border border-[#1F3A2B]/10 aspect-[4/3] bg-[#FFFCF7]">
                 <span className="absolute top-3 left-3 z-10 text-[11px] font-semibold uppercase tracking-wider text-white bg-black/55 backdrop-blur px-3 py-1 rounded-full">
                   {section.label}
                 </span>
@@ -672,27 +691,27 @@ export default function App() {
                 return (
                   <article
                     key={item.id}
-                    className={`rounded-3xl bg-[#211C1C] border p-5 transition-colors ${
-                      qty ? "border-[#C23B33]/50" : "border-white/5"
+                    className={`rounded-3xl bg-[#FFFCF7] border p-5 shadow-[0_6px_20px_rgba(31,58,43,0.06)] transition-colors ${
+                      qty ? "border-[#D46A35]/50" : "border-[#1F3A2B]/10"
                     }`}
                   >
                     <div className="flex gap-4">
                       <div className="flex-1 min-w-0">
                         {item.badge && (
-                          <span className="inline-block mb-2 font-mono text-[10px] uppercase tracking-widest text-[#E0544B] bg-[#C23B33]/10 border border-[#C23B33]/30 rounded-full px-2.5 py-0.5">
+                          <span className="inline-block mb-2 font-mono text-[10px] uppercase tracking-widest text-[#C2562A] bg-[#D46A35]/10 border border-[#D46A35]/30 rounded-full px-2.5 py-0.5">
                             {item.badge}
                           </span>
                         )}
-                        <h3 className="font-display text-[17px] font-semibold tracking-wide text-white leading-snug uppercase">
+                        <h3 className="font-display text-[17px] font-semibold tracking-wide text-[#1F3A2B] leading-snug uppercase">
                           {item.name}
                         </h3>
                         {item.description && (
-                          <p className="text-[15px] text-neutral-400 mt-1.5 leading-relaxed">
+                          <p className="text-[15px] text-[#5F6F63] mt-1.5 leading-relaxed">
                             {item.description}
                           </p>
                         )}
                         {item.note && (
-                          <p className="text-[13px] text-[#E3B062] mt-1.5">
+                          <p className="text-[13px] text-[#B8862D] mt-1.5">
                             {item.note}
                           </p>
                         )}
@@ -702,14 +721,14 @@ export default function App() {
                           src={item.thumb}
                           alt={item.name}
                           loading="lazy"
-                          className="w-24 h-24 rounded-2xl object-cover shrink-0 border border-white/5"
+                          className="w-24 h-24 rounded-2xl object-cover shrink-0 border border-[#1F3A2B]/10"
                         />
                       )}
                     </div>
 
                     {item.options && (
                       <div className="mt-3 flex flex-wrap items-center gap-2">
-                        <span className="text-xs text-neutral-500 mr-1">
+                        <span className="text-xs text-[#7D897F] mr-1">
                           {item.options.label}
                         </span>
                         {item.options.choices.map((c) => (
@@ -720,8 +739,8 @@ export default function App() {
                             }
                             className={`px-3 py-1 rounded-full text-xs border transition-colors ${
                               option === c
-                                ? "bg-white text-[#141111] border-white"
-                                : "border-white/15 text-neutral-300 hover:border-white/40"
+                                ? "bg-[#1F3A2B] text-white border-[#1F3A2B]"
+                                : "border-[#1F3A2B]/20 text-[#45574A] hover:border-[#1F3A2B]/30"
                             }`}
                           >
                             {c}
@@ -731,25 +750,25 @@ export default function App() {
                     )}
 
                     <div className="mt-4 flex items-center justify-between">
-                      <span className="font-serif text-2xl font-bold text-[#E0544B]">
+                      <span className="font-serif text-2xl font-bold text-[#C2562A]">
                         {money(item.price)}
                       </span>
                       {qty ? (
-                        <div className="flex items-center gap-3 bg-[#2C2525] rounded-full p-1 border border-white/10">
+                        <div className="flex items-center gap-3 bg-[#EFE8DC] rounded-full p-1 border border-[#1F3A2B]/15">
                           <button
                             onClick={() => remove(key)}
                             aria-label={`Remove one ${item.name}`}
-                            className="w-9 h-9 rounded-full flex items-center justify-center text-white hover:bg-white/10"
+                            className="w-9 h-9 rounded-full flex items-center justify-center text-[#1F3A2B] hover:bg-[#1F3A2B]/10"
                           >
                             <Minus size={16} />
                           </button>
-                          <span className="w-4 text-center font-semibold text-white">
+                          <span className="w-4 text-center font-semibold text-[#1F3A2B]">
                             {qty}
                           </span>
                           <button
                             onClick={() => add(key)}
                             aria-label={`Add one more ${item.name}`}
-                            className="w-9 h-9 rounded-full flex items-center justify-center bg-[#C23B33] text-white"
+                            className="w-9 h-9 rounded-full flex items-center justify-center bg-[#D46A35] text-white"
                           >
                             <Plus size={16} />
                           </button>
@@ -757,7 +776,7 @@ export default function App() {
                       ) : (
                         <button
                           onClick={() => add(key)}
-                          className="flex items-center gap-2 px-5 h-11 rounded-full bg-transparent border border-white/25 text-white font-medium hover:bg-[#C23B33] hover:border-[#C23B33] active:scale-95 transition"
+                          className="flex items-center gap-2 px-5 h-11 rounded-full bg-transparent border border-[#1F3A2B]/25 text-[#1F3A2B] font-medium hover:bg-[#D46A35] hover:border-[#D46A35] hover:text-white active:scale-95 transition"
                         >
                           <Plus size={16} />
                           Add
@@ -773,18 +792,18 @@ export default function App() {
 
         {/* Good to know */}
         <section className="pt-10">
-          <div className="rounded-3xl bg-[#211C1C] border border-white/5 p-5 space-y-3 text-[15px]">
-            <p className="text-white font-serif text-xl font-semibold">
+          <div className="rounded-3xl bg-[#FFFCF7] border border-[#1F3A2B]/10 p-5 space-y-3 text-[15px]">
+            <p className="text-[#1F3A2B] font-serif text-xl font-semibold">
               Good to know
             </p>
-            <p className="text-neutral-400">
-              <span className="text-white">Spice level:</span> Mild · Spicy ·
+            <p className="text-[#5F6F63]">
+              <span className="text-[#1F3A2B]">Spice level:</span> Mild · Spicy ·
               Hot — choose when you order.
             </p>
-            <p className="text-neutral-400 flex gap-2">
+            <p className="text-[#5F6F63] flex gap-2">
               <AlertCircle
                 size={18}
-                className="text-[#E3B062] shrink-0 mt-0.5"
+                className="text-[#B8862D] shrink-0 mt-0.5"
               />
               Kindly let us know if you are allergic to something.
             </p>
@@ -793,38 +812,38 @@ export default function App() {
 
         <button
           onClick={() => setShowPolicy(true)}
-          className="mt-3 w-full rounded-2xl border border-white/10 py-3 text-sm text-neutral-300 flex items-center justify-center gap-2"
+          className="mt-3 w-full rounded-2xl border border-[#1F3A2B]/15 py-3 text-sm text-[#45574A] flex items-center justify-center gap-2"
         >
           <Info size={16} /> Ordering & delivery info
         </button>
       </main>
 
       {/* Footer */}
-      <footer className="mt-12 bg-[#0F0D0D] border-t border-white/5">
+      <footer className="mt-12 bg-[#1F3A2B]">
         <div className="max-w-2xl mx-auto px-4 py-10">
           <div className="flex items-center gap-3">
             <img
               src={risaLogo}
               alt=""
-              className="w-12 h-12 rounded-full object-cover border border-[#E3B062]/50"
+              className="w-12 h-12 rounded-full object-cover border border-[#E7C27A]/60"
             />
             <div>
               <p className="font-display text-2xl font-semibold tracking-[0.12em] text-white leading-none">
                 RISA
               </p>
-              <p className="font-display text-[10px] tracking-[0.3em] text-[#E3B062] mt-1">
+              <p className="font-display text-[10px] tracking-[0.3em] text-[#E7C27A] mt-1">
                 CRAFTED FOR CRAVINGS
               </p>
             </div>
           </div>
-          <p className="text-neutral-400 mt-4 leading-relaxed">
+          <p className="text-[#C9D6C4] mt-4 leading-relaxed">
             Ghanaian salad bowls, loaded noodles and stir-fry pasta, wings and
             sweet treats — made fresh for every order.
           </p>
 
           <div className="grid grid-cols-2 gap-6 mt-8 text-sm">
             <div>
-              <p className="font-display text-xs tracking-[0.25em] text-[#E3B062] mb-3">
+              <p className="font-display text-xs tracking-[0.25em] text-[#E7C27A] mb-3">
                 MENU
               </p>
               <ul className="space-y-2">
@@ -832,7 +851,7 @@ export default function App() {
                   <li key={s.id}>
                     <button
                       onClick={() => jumpTo(s.id)}
-                      className="text-neutral-300 hover:text-white"
+                      className="text-[#E8EFE3] hover:text-white"
                     >
                       {s.label}
                     </button>
@@ -841,10 +860,10 @@ export default function App() {
               </ul>
             </div>
             <div>
-              <p className="font-display text-xs tracking-[0.25em] text-[#E3B062] mb-3">
+              <p className="font-display text-xs tracking-[0.25em] text-[#E7C27A] mb-3">
                 VISIT & ORDER
               </p>
-              <ul className="space-y-3 text-neutral-300">
+              <ul className="space-y-3 text-[#E8EFE3]">
                 <li>
                   <a
                     href={WHATSAPP_CHAT}
@@ -864,7 +883,7 @@ export default function App() {
                   </a>
                 </li>
                 <li className="flex gap-2">
-                  <Clock size={16} className="text-[#E0544B] shrink-0 mt-0.5" />
+                  <Clock size={16} className="text-[#F09A6B] shrink-0 mt-0.5" />
                   <span>
                     Friday – Sunday
                     <br />
@@ -872,18 +891,18 @@ export default function App() {
                   </span>
                 </li>
                 <li className="flex gap-2">
-                  <Bike size={16} className="text-[#E0544B] shrink-0 mt-0.5" />
+                  <Bike size={16} className="text-[#F09A6B] shrink-0 mt-0.5" />
                   <span>Pick up & delivery in Accra</span>
                 </li>
               </ul>
             </div>
           </div>
 
-          <div className="mt-10 pt-5 border-t border-white/10 flex items-center justify-between text-xs text-neutral-500">
+          <div className="mt-10 pt-5 border-t border-white/10 flex items-center justify-between text-xs text-[#A9B9A0]">
             <span>© {new Date().getFullYear()} RISA. All rights reserved.</span>
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="flex items-center gap-1 text-neutral-300"
+              className="flex items-center gap-1 text-[#E8EFE3]"
             >
               Back to top <ArrowUp size={13} />
             </button>
@@ -894,29 +913,29 @@ export default function App() {
       {/* Ordering info popup */}
       {showPolicy && (
         <div
-          className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-[60] bg-[#1F3A2B]/50 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={closePolicy}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-md max-h-[88vh] overflow-y-auto rounded-3xl bg-[#1B1616] border border-white/10 p-6"
+            className="relative w-full max-w-md max-h-[88vh] overflow-y-auto rounded-3xl bg-[#FFFCF7] border border-[#1F3A2B]/15 p-6"
           >
             <button
               onClick={closePolicy}
               aria-label="Close"
-              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center"
+              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-[#1F3A2B]/10 text-[#1F3A2B] flex items-center justify-center"
             >
               <X size={18} />
             </button>
             <img
               src={risaLogo}
               alt=""
-              className="w-14 h-14 mx-auto rounded-full object-cover border border-[#E3B062]/60"
+              className="w-14 h-14 mx-auto rounded-full object-cover border border-[#B8862D]/60"
             />
-            <h2 className="font-display text-center text-lg font-semibold tracking-[0.1em] text-white mt-3">
+            <h2 className="font-display text-center text-lg font-semibold tracking-[0.1em] text-[#1F3A2B] mt-3">
               RISA ORDERING INFO
             </h2>
-            <p className="text-center text-sm text-neutral-400 mt-2">
+            <p className="text-center text-sm text-[#5F6F63] mt-2">
               Every order is made fresh for you, so please allow a little time
               for preparation.
             </p>
@@ -950,16 +969,16 @@ export default function App() {
               ].map(({ icon: Icon, title, text }) => (
                 <div
                   key={title}
-                  className="flex gap-3 rounded-2xl border border-white/10 p-3"
+                  className="flex gap-3 rounded-2xl border border-[#1F3A2B]/15 p-3"
                 >
-                  <span className="w-9 h-9 shrink-0 rounded-full bg-[#C23B33]/15 text-[#E0544B] flex items-center justify-center">
+                  <span className="w-9 h-9 shrink-0 rounded-full bg-[#D46A35]/15 text-[#C2562A] flex items-center justify-center">
                     <Icon size={17} />
                   </span>
                   <div>
-                    <p className="font-display text-xs font-semibold tracking-[0.12em] text-white uppercase">
+                    <p className="font-display text-xs font-semibold tracking-[0.12em] text-[#1F3A2B] uppercase">
                       {title}
                     </p>
-                    <p className="text-sm text-neutral-400 mt-0.5">{text}</p>
+                    <p className="text-sm text-[#5F6F63] mt-0.5">{text}</p>
                   </div>
                 </div>
               ))}
@@ -968,14 +987,14 @@ export default function App() {
               href={WHATSAPP_CHAT}
               target="_blank"
               rel="noreferrer"
-              className="mt-5 rounded-2xl bg-[#E3B062]/10 border border-[#E3B062]/30 p-4 text-sm text-[#F0D3A0] flex gap-2"
+              className="mt-5 rounded-2xl bg-[#B8862D]/10 border border-[#B8862D]/30 p-4 text-sm text-[#7A5A1C] flex gap-2"
             >
               <MessageCircle size={17} className="shrink-0 mt-0.5" />
               Questions? WhatsApp us on {PHONE_DISPLAY}.
             </a>
             <button
               onClick={closePolicy}
-              className="mt-4 w-full h-12 rounded-full bg-[#C23B33] text-white font-medium"
+              className="mt-4 w-full h-12 rounded-full bg-[#D46A35] text-white font-medium"
             >
               Start ordering
             </button>
@@ -984,13 +1003,13 @@ export default function App() {
       )}
 
       {/* Bottom order bar */}
-      <div className="fixed bottom-0 inset-x-0 z-40 bg-[#191515]/95 backdrop-blur-md border-t border-white/10">
+      <div className="fixed bottom-0 inset-x-0 z-40 bg-[#FFFCF7]/95 backdrop-blur-md border-t border-[#1F3A2B]/15">
         <div className="max-w-2xl mx-auto px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] flex items-center justify-between gap-4">
           <div>
-            <p className="font-serif text-2xl font-bold text-white leading-none">
+            <p className="font-serif text-2xl font-bold text-[#1F3A2B] leading-none">
               {money(totalPrice)}
             </p>
-            <p className="text-xs text-neutral-400 mt-1 whitespace-nowrap">
+            <p className="text-xs text-[#5F6F63] mt-1 whitespace-nowrap">
               {totalCount === 0
                 ? "Your order awaits"
                 : `${totalCount} item${totalCount > 1 ? "s" : ""} in your order`}
@@ -1001,7 +1020,7 @@ export default function App() {
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                 aria-label="Back to top"
-                className="w-12 h-12 rounded-xl border border-white/15 text-white flex items-center justify-center active:scale-95 transition"
+                className="w-12 h-12 rounded-xl border border-[#1F3A2B]/20 text-[#1F3A2B] flex items-center justify-center active:scale-95 transition"
               >
                 <ArrowUp size={18} />
               </button>
@@ -1010,7 +1029,7 @@ export default function App() {
               onClick={() =>
                 totalCount ? setIsCartOpen(true) : jumpTo(MENU[0].id)
               }
-              className="h-12 px-5 rounded-xl bg-[#C23B33] text-white font-medium whitespace-nowrap flex items-center gap-2 active:scale-95 transition"
+              className="h-12 px-5 rounded-xl bg-[#D46A35] text-white font-medium whitespace-nowrap flex items-center gap-2 active:scale-95 transition"
             >
               {totalCount ? "View order" : "View menu"}
               <ArrowRight size={17} />
@@ -1022,26 +1041,26 @@ export default function App() {
       {/* Order sheet */}
       {isCartOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center"
+          className="fixed inset-0 z-50 bg-[#1F3A2B]/50 backdrop-blur-sm flex items-end sm:items-center justify-center"
           onClick={() => setIsCartOpen(false)}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-[#191515] w-full max-w-lg rounded-t-3xl sm:rounded-3xl border border-white/10 max-h-[90vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom-5"
+            className="bg-[#FFFCF7] w-full max-w-lg rounded-t-3xl sm:rounded-3xl border border-[#1F3A2B]/15 max-h-[90vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom-5"
           >
-            <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
+            <div className="px-5 py-4 border-b border-[#1F3A2B]/15 flex items-center justify-between">
               <div>
-                <h2 className="font-serif text-xl font-bold text-white">
+                <h2 className="font-serif text-xl font-bold text-[#1F3A2B]">
                   Your order
                 </h2>
-                <p className="text-xs text-neutral-400">
+                <p className="text-xs text-[#5F6F63]">
                   Sent to RISA on WhatsApp
                 </p>
               </div>
               <button
                 onClick={() => setIsCartOpen(false)}
                 aria-label="Close"
-                className="w-9 h-9 rounded-full bg-white/5 text-neutral-300 flex items-center justify-center"
+                className="w-9 h-9 rounded-full bg-[#1F3A2B]/5 text-[#45574A] flex items-center justify-center"
               >
                 <X size={18} />
               </button>
@@ -1052,9 +1071,9 @@ export default function App() {
                 <div className="text-center py-10">
                   <ShoppingBag
                     size={32}
-                    className="mx-auto text-neutral-600 mb-2"
+                    className="mx-auto text-[#A3ADA4] mb-2"
                   />
-                  <p className="text-neutral-400">
+                  <p className="text-[#5F6F63]">
                     Nothing here yet — add something tasty.
                   </p>
                 </div>
@@ -1069,22 +1088,22 @@ export default function App() {
                       return (
                         <div
                           key={key}
-                          className="flex items-center gap-3 bg-[#221D1D] p-3 rounded-2xl"
+                          className="flex items-center gap-3 bg-[#EFE8DC] p-3 rounded-2xl"
                         >
                           <div className="flex-1 min-w-0">
-                            <p className="text-[11px] uppercase tracking-wider text-neutral-500">
+                            <p className="text-[11px] uppercase tracking-wider text-[#7D897F]">
                               {section.label}
                             </p>
-                            <p className="text-sm font-medium text-white">
+                            <p className="text-sm font-medium text-[#1F3A2B]">
                               {item.name}
                               {option && (
-                                <span className="text-neutral-400">
+                                <span className="text-[#5F6F63]">
                                   {" "}
                                   · {option}
                                 </span>
                               )}
                             </p>
-                            <p className="text-sm text-[#E0544B] mt-0.5">
+                            <p className="text-sm text-[#C2562A] mt-0.5">
                               {money(item.price * qty)}
                             </p>
                           </div>
@@ -1092,7 +1111,7 @@ export default function App() {
                             <button
                               onClick={() => remove(key)}
                               aria-label="Remove one"
-                              className="w-8 h-8 rounded-lg bg-white/5 text-white flex items-center justify-center"
+                              className="w-8 h-8 rounded-lg bg-[#1F3A2B]/5 text-[#1F3A2B] flex items-center justify-center"
                             >
                               <Minus size={14} />
                             </button>
@@ -1102,7 +1121,7 @@ export default function App() {
                             <button
                               onClick={() => add(key)}
                               aria-label="Add one"
-                              className="w-8 h-8 rounded-lg bg-[#C23B33] text-white flex items-center justify-center"
+                              className="w-8 h-8 rounded-lg bg-[#D46A35] text-white flex items-center justify-center"
                             >
                               <Plus size={14} />
                             </button>
@@ -1186,8 +1205,8 @@ export default function App() {
                       rows={3}
                       className={inputClass}
                     />
-                    <p className="text-xs text-neutral-500 mt-1.5 flex items-center gap-1.5">
-                      <AlertCircle size={13} className="text-[#E3B062]" />
+                    <p className="text-xs text-[#7D897F] mt-1.5 flex items-center gap-1.5">
+                      <AlertCircle size={13} className="text-[#B8862D]" />
                       Kindly let us know if you are allergic to something.
                     </p>
                   </Field>
@@ -1196,23 +1215,23 @@ export default function App() {
             </div>
 
             {totalCount > 0 && (
-              <div className="p-5 border-t border-white/10 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
+              <div className="p-5 border-t border-[#1F3A2B]/15 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-neutral-300">
+                  <span className="text-sm text-[#45574A]">
                     Food subtotal
                   </span>
-                  <span className="font-serif text-2xl font-bold text-white">
+                  <span className="font-serif text-2xl font-bold text-[#1F3A2B]">
                     {money(totalPrice)}
                   </span>
                 </div>
-                <p className="text-xs text-neutral-500 mt-1 mb-3">
+                <p className="text-xs text-[#7D897F] mt-1 mb-3">
                   {orderType === "Delivery"
                     ? "Delivery fee is not included; it will be confirmed based on your location."
                     : "Pick up — we’ll confirm when your order is ready."}
                 </p>
                 {showErrors &&
                   (missing.name || missing.phone || missing.address) && (
-                    <p className="text-sm text-[#F07A72] mb-3">
+                    <p className="text-sm text-[#C0392B] mb-3">
                       Please fill in the highlighted details above.
                     </p>
                   )}
@@ -1233,7 +1252,7 @@ export default function App() {
 }
 
 const inputClass =
-  "w-full bg-[#221D1D] border border-white/10 rounded-xl px-3 py-3 text-[16px] text-white placeholder-neutral-500 focus:outline-none focus:border-[#C23B33]";
+  "w-full bg-[#EFE8DC] border border-[#1F3A2B]/15 rounded-xl px-3 py-3 text-[16px] text-[#1F3A2B] placeholder-[#9AA59B] focus:outline-none focus:border-[#D46A35]";
 
 function Field({
   label,
@@ -1247,12 +1266,12 @@ function Field({
   return (
     <div
       className={
-        error ? "[&_input]:border-[#E0544B] [&_textarea]:border-[#E0544B]" : ""
+        error ? "[&_input]:border-[#C2562A] [&_textarea]:border-[#C2562A]" : ""
       }
     >
-      <label className="block text-sm text-neutral-300 mb-2">{label}</label>
+      <label className="block text-sm text-[#45574A] mb-2">{label}</label>
       {children}
-      {error && <p className="text-xs text-[#F07A72] mt-1.5">{error}</p>}
+      {error && <p className="text-xs text-[#C0392B] mt-1.5">{error}</p>}
     </div>
   );
 }
@@ -1270,7 +1289,7 @@ function Choice<T extends string>({
 }) {
   return (
     <div>
-      <p className="text-sm text-neutral-300 mb-2">{label}</p>
+      <p className="text-sm text-[#45574A] mb-2">{label}</p>
       <div className="flex gap-2">
         {options.map((o) => (
           <button
@@ -1278,8 +1297,8 @@ function Choice<T extends string>({
             onClick={() => onChange(o)}
             className={`flex-1 py-2.5 rounded-xl text-sm font-medium border transition-colors ${
               value === o
-                ? "bg-[#C23B33] text-white border-[#C23B33]"
-                : "bg-[#221D1D] text-neutral-400 border-white/5"
+                ? "bg-[#D46A35] text-white border-[#D46A35]"
+                : "bg-[#EFE8DC] text-[#5F6F63] border-[#1F3A2B]/10"
             }`}
           >
             {o}
