@@ -53,3 +53,6 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Vercel build output (copied from artifacts/risa-ordering/dist/public)
+/public
