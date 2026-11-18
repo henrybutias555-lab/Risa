@@ -26,6 +26,7 @@ import pineapplePhoto from "./assets/menu-photos/pineapple-risa.jpg";
 import sagoPhoto from "./assets/menu-photos/sago-square.jpg";
 import parfaitPhoto from "./assets/menu-photos/parfait-risa.jpg";
 import noodlesSectionPhoto from "./assets/menu-photos/noodles-ghana.jpg";
+import buldakPhoto from "./assets/menu-photos/buldak-photo.jpg";
 import pennePhoto from "./assets/menu-photos/penne-risa.jpg";
 import gizdodoPhoto from "./assets/menu-photos/gizdodo-risa.jpg";
 import soboloPhoto from "./assets/menu-photos/sobolo-risa.jpg";
@@ -177,6 +178,31 @@ const MENU: Section[] = [
     ],
   },
   {
+    id: "buldak",
+    label: "Buldak Noodles",
+    title: "Buldak Noodles",
+    tagline: "Spicy, saucy and seriously craveable.",
+    photo: buldakPhoto,
+    items: [
+      {
+        id: "buldak-fire",
+        name: "Fire Craving",
+        price: 70,
+        badge: "Spicy",
+        description: "Choose one type of Buldak, with sausage and eggs.",
+        note: "Tell us your Buldak flavour in the order notes",
+      },
+      {
+        id: "buldak-risbuld",
+        name: "RisBuld",
+        price: 100,
+        badge: "Signature",
+        description: "Choose one Buldak flavour, with sausage, egg, shrimp and cheese.",
+        note: "Tell us your Buldak flavour in the order notes",
+      },
+    ],
+  },
+  {
     id: "gizdodo",
     label: "Gizdodo",
     title: "Gizdodo",
@@ -248,7 +274,7 @@ const MENU: Section[] = [
       },
       {
         id: "drink-bavaria",
-        name: "Bavaria Malt",
+        name: "Bavaria Smalt",
         price: 10,
         description: "Dark malt drink. 0.0% alcohol.",
         thumb: bavariaPhoto,
