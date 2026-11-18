@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   AlertCircle,
   ArrowRight,
@@ -290,6 +290,9 @@ export default function App() {
   const [orderType, setOrderType] = useState<(typeof ORDER_TYPES)[number]>('Pick up');
   const [address, setAddress] = useState('');
   const [allergyNote, setAllergyNote] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const [showErrors, setShowErrors] = useState(false);
 
   const pillsRef = useRef<HTMLDivElement>(null);
   const clickScrolling = useRef(false);
@@ -357,8 +360,18 @@ export default function App() {
     return { totalCount: count, totalPrice: price };
   }, [cart]);
 
+  const missing = {
+    name: !customerName.trim(),
+    phone: customerPhone.replace(/\D/g, '').length < 9,
+    address: orderType === 'Delivery' && !address.trim(),
+  };
+
   const sendWhatsAppOrder = () => {
     if (totalCount === 0) return;
+    if (missing.name || missing.phone || missing.address) {
+      setShowErrors(true);
+      return;
+    }
     const lines = Object.entries(cart).map(([key, qty]) => {
       const { id, option } = parseKey(key);
       const item = findItem(id)!;
@@ -371,12 +384,15 @@ export default function App() {
       '',
       ...lines,
       '',
-      `*Total: ${money(totalPrice)}*`,
+      `*Food subtotal: ${money(totalPrice)}*`,
+      orderType === 'Delivery' ? '_Delivery fee to be confirmed_' : null,
       '',
+      `Name: ${customerName.trim()}`,
+      `Phone: ${customerPhone.trim()}`,
       `Order type: ${orderType}`,
       orderType === 'Delivery' && address.trim() ? `Delivery location: ${address.trim()}` : null,
       `Spice level: ${spiceLevel}`,
-      allergyNote.trim() ? `Allergies / notes: ${allergyNote.trim()}` : null,
+      allergyNote.trim() ? `Add-ons / flavours / allergies: ${allergyNote.trim()}` : null,
     ]
       .filter((l) => l !== null)
       .join('\n');
@@ -670,40 +686,78 @@ export default function App() {
                     })}
                   </div>
 
-                  <Choice<(typeof ORDER_TYPES)[number]> label="Pick up or delivery" options={ORDER_TYPES} value={orderType} onChange={setOrderType} />
-                  {orderType === 'Delivery' && (
+                  <Field label="Your name" error={showErrors && missing.name ? 'Please enter your name' : undefined}>
                     <input
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                      placeholder="Delivery location"
-                      className="w-full bg-[#221D1D] border border-white/10 rounded-xl px-3 py-3 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#C23B33]"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      placeholder="Enter your name"
+                      autoComplete="name"
+                      className={inputClass}
                     />
-                  )}
-                  <Choice<(typeof SPICE_LEVELS)[number]> label="Spice level" options={SPICE_LEVELS} value={spiceLevel} onChange={setSpiceLevel} />
+                  </Field>
+                  <Field
+                    label="Your phone number"
+                    error={showErrors && missing.phone ? 'Please enter a valid phone number' : undefined}
+                  >
+                    <input
+                      value={customerPhone}
+                      onChange={(e) => setCustomerPhone(e.target.value)}
+                      placeholder="Your contact number"
+                      type="tel"
+                      inputMode="tel"
+                      autoComplete="tel"
+                      className={inputClass}
+                    />
+                  </Field>
 
-                  <div>
-                    <label className="text-sm text-neutral-300 flex items-center gap-1.5 mb-2">
-                      <AlertCircle size={14} className="text-[#E3B062]" />
-                      Allergic to something? Let us know
-                    </label>
+                  <Choice<(typeof ORDER_TYPES)[number]> label="Order method" options={ORDER_TYPES} value={orderType} onChange={setOrderType} />
+                  {orderType === 'Delivery' && (
+                    <Field
+                      label="Delivery location in Accra"
+                      error={showErrors && missing.address ? 'Please enter your delivery location' : undefined}
+                    >
+                      <input
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        placeholder="e.g. Teshie, Osu, East Legon"
+                        autoComplete="street-address"
+                        className={inputClass}
+                      />
+                    </Field>
+                  )}
+                  <Choice<(typeof SPICE_LEVELS)[number]> label="Preferred spice level" options={SPICE_LEVELS} value={spiceLevel} onChange={setSpiceLevel} />
+
+                  <Field label="Add-ons, flavour choices or allergy notes">
                     <textarea
                       value={allergyNote}
                       onChange={(e) => setAllergyNote(e.target.value)}
-                      placeholder="e.g. no shrimp"
-                      rows={2}
-                      className="w-full bg-[#221D1D] border border-white/10 rounded-xl p-3 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#C23B33]"
+                      placeholder="e.g. BBQ wings, mango sago, no onions…"
+                      rows={3}
+                      className={inputClass}
                     />
-                  </div>
+                    <p className="text-xs text-neutral-500 mt-1.5 flex items-center gap-1.5">
+                      <AlertCircle size={13} className="text-[#E3B062]" />
+                      Kindly let us know if you are allergic to something.
+                    </p>
+                  </Field>
                 </>
               )}
             </div>
 
             {totalCount > 0 && (
               <div className="p-5 border-t border-white/10 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
-                <div className="flex justify-between items-center mb-3">
-                  <span className="text-sm text-neutral-400">Total</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-neutral-300">Food subtotal</span>
                   <span className="font-serif text-2xl font-bold text-white">{money(totalPrice)}</span>
                 </div>
+                <p className="text-xs text-neutral-500 mt-1 mb-3">
+                  {orderType === 'Delivery'
+                    ? 'Delivery fee is not included; it will be confirmed based on your location.'
+                    : 'Pick up — we’ll confirm when your order is ready.'}
+                </p>
+                {showErrors && (missing.name || missing.phone || missing.address) && (
+                  <p className="text-sm text-[#F07A72] mb-3">Please fill in the highlighted details above.</p>
+                )}
                 <button
                   onClick={sendWhatsAppOrder}
                   className="w-full h-13 py-3.5 rounded-xl bg-[#25D366] text-[#0B2B17] font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition"
@@ -716,6 +770,19 @@ export default function App() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+const inputClass =
+  'w-full bg-[#221D1D] border border-white/10 rounded-xl px-3 py-3 text-[16px] text-white placeholder-neutral-500 focus:outline-none focus:border-[#C23B33]';
+
+function Field({ label, error, children }: { label: string; error?: string; children: ReactNode }) {
+  return (
+    <div className={error ? '[&_input]:border-[#E0544B] [&_textarea]:border-[#E0544B]' : ''}>
+      <label className="block text-sm text-neutral-300 mb-2">{label}</label>
+      {children}
+      {error && <p className="text-xs text-[#F07A72] mt-1.5">{error}</p>}
     </div>
   );
 }
