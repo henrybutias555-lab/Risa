@@ -1,564 +1,654 @@
-import React, { useState, useMemo } from 'react';
-import { 
-  ArrowRight, 
-  Clock, 
-  Phone, 
-  Plus, 
-  Minus, 
-  ShoppingBag, 
-  X, 
-  Send, 
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
   AlertCircle,
-  Sparkles
+  ArrowRight,
+  Bike,
+  Clock,
+  Minus,
+  Phone,
+  Plus,
+  Send,
+  ShoppingBag,
+  X,
 } from 'lucide-react';
 
-// Use your existing project logo
-import risaLogo from './assets/risa-logo-design.jpg';
+import risaLogo from './assets/risa-logo-design.jpeg';
+import saladsPhoto from './assets/menu-photos/salads-risa-enhanced.jpg';
+import noodlesPhoto from './assets/menu-photos/noodles-risa-enhanced.jpg';
+import wingsPhoto from './assets/menu-photos/wings-risa-enhanced.jpg';
+import mozzarellaPhoto from './assets/menu-photos/mozzarella-risa-enhanced.jpg';
+import kenkeyPhoto from './assets/menu-photos/kenkey-risa.jpg';
+import pineapplePhoto from './assets/menu-photos/pineapple-risa.jpg';
+import sagoPhoto from './assets/menu-photos/sago-square.jpg';
+import parfaitPhoto from './assets/menu-photos/parfait-risa.jpg';
 
-type Category = 'salads' | 'noodles' | 'penne' | 'gizdodo' | 'wings' | 'drinks' | 'extras';
+const PHONE_DISPLAY = '024 128 0476';
+const PHONE_TEL = '0241280476';
+const WHATSAPP = '233241280476';
 
 interface Product {
   id: string;
   name: string;
   price: number;
-  category: Category;
-  description: string;
+  description?: string;
+  note?: string;
   badge?: string;
-  flavors?: string[];
-  optionsNote?: string;
-  image?: string;
+  options?: { label: string; choices: string[] };
+  thumb?: string;
 }
 
-const MENU_ITEMS: Product[] = [
-  // --- SALAD BOWLS ---
-  {
-    id: 'salad-mini',
-    name: 'Mini Salad Bowl',
-    price: 30,
-    category: 'salads',
-    description: 'Vegetables, sardine, egg, corned beef, ketchup, baked beans, special sauce.',
-    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 'salad-classic',
-    name: 'Classic Salad Bowl',
-    price: 50,
-    category: 'salads',
-    badge: 'POPULAR',
-    description: 'Vegetables, sardines, egg, sausage, corned beef, sweet corn, macaroni, special sauce, ketchup, baked beans, sweet potato.',
-    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 'salad-cluck',
-    name: 'Cluck Chicken Salad Bowl',
-    price: 70,
-    category: 'salads',
-    description: 'Vegetables, egg, gizzards, macaroni, sweet corn, chicken, special sauce, ketchup, baked beans, sweet potato.',
-    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'
-  },
+interface Section {
+  id: string;
+  label: string;
+  title: string;
+  tagline: string;
+  photo?: string;
+  items: Product[];
+}
 
-  // --- NOODLES / STIR FRY PASTA ---
+const MENU: Section[] = [
   {
-    id: 'noodles-reg',
-    name: 'Regular Noodles / Stir-fry Pasta',
-    price: 30,
-    category: 'noodles',
-    description: 'Noodles or pasta, vegetables, egg, sausage, sardine, corned beef.',
-    image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80'
+    id: 'salads',
+    label: 'Salad Bowls',
+    title: 'Ghanaian Salad Bowl',
+    tagline: 'Fresh, hearty and packed with flavour.',
+    photo: saladsPhoto,
+    items: [
+      {
+        id: 'salad-mini',
+        name: 'Mini Salad Bowl',
+        price: 30,
+        description: 'Vegetables, sardine, egg, corned beef, ketchup, baked beans, special sauce.',
+      },
+      {
+        id: 'salad-classic',
+        name: 'Classic Salad Bowl',
+        price: 50,
+        badge: 'Popular',
+        description:
+          'Vegetables, sardines, egg, sausage, corned beef, sweet corn, macaroni, special sauce, ketchup, baked beans, sweet potato.',
+      },
+      {
+        id: 'salad-cluck',
+        name: 'Cluck Chicken Salad Bowl',
+        price: 70,
+        description:
+          'Vegetables, egg, gizzards, macaroni, sweet corn, chicken, special sauce, ketchup, baked beans, sweet potato.',
+      },
+    ],
   },
   {
-    id: 'noodles-mini',
-    name: 'Mini Craving Noodles / Stir-fry Pasta',
-    price: 40,
-    category: 'noodles',
-    badge: 'POPULAR',
-    description: 'Noodles or pasta, vegetables, sausages, sardines, eggs, gizzard, corned beef.',
-    optionsNote: 'Comes with either extra egg or sausage',
-    image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=800&q=80'
+    id: 'noodles',
+    label: 'Noodles / Stir Fry',
+    title: 'Noodles / Stir Fry Pasta',
+    tagline: 'The cravings that started it all.',
+    photo: noodlesPhoto,
+    items: [
+      {
+        id: 'noodles-regular',
+        name: 'Regular Noodles / Stir-fry Pasta',
+        price: 30,
+        description: 'Noodles or pasta, vegetables, egg, sausage, sardine, corned beef.',
+        options: { label: 'Base', choices: ['Noodles', 'Pasta'] },
+      },
+      {
+        id: 'noodles-mini',
+        name: 'Mini Craving Noodles / Stir-fry Pasta',
+        price: 40,
+        description: 'Noodles or pasta, vegetables, sausages, sardines, eggs, gizzard, corned beef.',
+        note: 'Comes with either extra egg or sausage',
+        options: { label: 'Extra', choices: ['Extra egg', 'Extra sausage'] },
+      },
+      {
+        id: 'noodles-classic',
+        name: 'Classic Craving Noodles / Stir-fry Pasta',
+        price: 50,
+        badge: 'Popular',
+        description: 'Noodles or pasta, vegetables, sausages, sardines, eggs, corned beef, gizzard.',
+        note: 'Comes with either extra egg or sausage',
+        options: { label: 'Extra', choices: ['Extra egg', 'Extra sausage'] },
+      },
+      {
+        id: 'noodles-cluck',
+        name: 'Cluck Craving Noodles / Stir-fry Pasta',
+        price: 70,
+        description:
+          'Noodles or pasta, vegetables, sausages, sardines, eggs, corned beef, chicken, gizzard, meat.',
+        note: 'Comes with either extra egg or sausage',
+        options: { label: 'Extra', choices: ['Extra egg', 'Extra sausage'] },
+      },
+      {
+        id: 'noodles-og',
+        name: 'OG Craving',
+        price: 100,
+        badge: 'Signature',
+        description:
+          'Noodles or pasta, vegetables, sausages, sardines, eggs, gizzard, corned beef, chicken, shrimp, meat.',
+        note: 'Comes with extra egg and sausage',
+      },
+      {
+        id: 'noodles-wings-combo',
+        name: 'Mini Craving × Chicken Wings',
+        price: 100,
+        badge: 'Combo',
+        description: 'Mini Craving noodles or stir-fry pasta with chicken wings.',
+        options: { label: 'Wing flavour', choices: ['Spicy', 'BBQ'] },
+      },
+    ],
   },
   {
-    id: 'noodles-classic',
-    name: 'Classic Craving Noodles or Stir Fry Pasta',
-    price: 50,
-    category: 'noodles',
-    description: 'Noodles or pasta, vegetables, sausages, sardines, eggs, corned beef, gizzard.',
-    optionsNote: 'Comes with either extra egg or sausage',
-    image: 'https://images.unsplash.com/photo-1612927601601-6638404737ce?auto=format&fit=crop&w=800&q=80'
+    id: 'penne',
+    label: 'Penne Pasta',
+    title: 'Penne Pasta Bowl',
+    tagline: 'Comfort in a bowl.',
+    items: [
+      { id: 'penne-small', name: 'Small Bowl', price: 40 },
+      {
+        id: 'penne-regular',
+        name: 'Regular Bowl with Chicken / Turkey',
+        price: 70,
+        options: { label: 'Protein', choices: ['Chicken', 'Turkey'] },
+      },
+    ],
   },
   {
-    id: 'noodles-cluck',
-    name: 'Cluck Craving Noodles / Stir-fry Pasta',
-    price: 70,
-    category: 'noodles',
-    description: 'Noodles or pasta, vegetables, sausages, sardines, eggs, corned beef, chicken, gizzard, meat.',
-    optionsNote: 'Comes with either extra egg or sausage',
-    image: 'https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format&fit=crop&w=800&q=80'
+    id: 'gizdodo',
+    label: 'Gizdodo',
+    title: 'Gizdodo',
+    tagline: 'Gizzard and plantain, done right.',
+    items: [
+      { id: 'gizdodo-small', name: 'Small Pack', price: 40 },
+      {
+        id: 'gizdodo-regular',
+        name: 'Regular Pack with Chicken / Turkey',
+        price: 70,
+        options: { label: 'Protein', choices: ['Chicken', 'Turkey'] },
+      },
+    ],
   },
   {
-    id: 'noodles-og',
-    name: 'OG Craving',
-    price: 100,
-    category: 'noodles',
-    badge: 'SIGNATURE',
-    description: 'Noodles or pasta, vegetables, sausages, sardines, eggs, gizzard, corned beef, chicken, shrimp & meat.',
-    optionsNote: 'Comes with extra egg and sausage',
-    image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80'
+    id: 'wings',
+    label: 'Chicken Wings',
+    title: 'Chicken Wings',
+    tagline: 'Juicy & tasty. Spicy or BBQ.',
+    photo: wingsPhoto,
+    items: [
+      {
+        id: 'wings-5',
+        name: '5 Pieces',
+        price: 50,
+        options: { label: 'Flavour', choices: ['Spicy', 'BBQ'] },
+      },
+      {
+        id: 'wings-10',
+        name: '10 Pieces',
+        price: 90,
+        badge: 'Value',
+        options: { label: 'Flavour', choices: ['Spicy', 'BBQ'] },
+      },
+    ],
   },
   {
-    id: 'noodles-wings-combo',
-    name: 'Mini Craving + Chicken Wings',
-    price: 100,
-    category: 'noodles',
-    badge: 'COMBO',
-    description: 'Mini Craving noodles or stir-fry pasta served with crispy chicken wings.',
-    image: 'https://images.unsplash.com/photo-1527477321005-4d45d724b8c4?auto=format&fit=crop&w=800&q=80'
-  },
-
-  // --- PENNE PASTA BOWL ---
-  {
-    id: 'penne-small',
-    name: 'Penne Pasta Bowl (Small)',
-    price: 40,
-    category: 'penne',
-    description: 'Rich savoury penne pasta bowl tossed in house sauce and vegetables.',
-    image: 'https://images.unsplash.com/photo-1621996346565-e3d5d6281084?auto=format&fit=crop&w=800&q=80'
+    id: 'mozzarella',
+    label: 'Mozzarella Sticks',
+    title: 'Mozzarella Sticks',
+    tagline: 'Golden and gooey. Comes with a special sauce.',
+    photo: mozzarellaPhoto,
+    items: [
+      { id: 'mozz-5', name: '5 Pieces', price: 60 },
+      { id: 'mozz-10', name: '10 Pieces', price: 115 },
+    ],
   },
   {
-    id: 'penne-chicken-turkey',
-    name: 'Penne Pasta Bowl (Regular with Chicken/Turkey)',
-    price: 70,
-    category: 'penne',
-    description: 'Generous penne pasta bowl with your choice of seasoned chicken or turkey.',
-    image: 'https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?auto=format&fit=crop&w=800&q=80'
-  },
-
-  // --- GIZDODO ---
-  {
-    id: 'gizdodo-small',
-    name: 'Gizdodo (Small Pack)',
-    price: 40,
-    category: 'gizdodo',
-    description: 'Peppered gizzards and sweet fried ripe plantains tossed in spicy bell pepper sauce.',
-    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 'gizdodo-chicken-turkey',
-    name: 'Gizdodo (Regular Pack with Chicken/Turkey)',
-    price: 70,
-    category: 'gizdodo',
-    description: 'Rich spiced gizdodo paired with tender seasoned chicken or turkey.',
-    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80'
-  },
-
-  // --- WINGS & SNACKS ---
-  {
-    id: 'wings-5',
-    name: 'Chicken Wings · 5 pieces',
-    price: 50,
-    category: 'wings',
-    flavors: ['Spicy', 'BBQ'],
-    description: 'Crispy, seasoned chicken wings. Five pieces. Choose Spicy or BBQ flavor.',
-    image: 'https://images.unsplash.com/photo-1527477321005-4d45d724b8c4?auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 'wings-10',
-    name: 'Chicken Wings · 10 pieces',
-    price: 90,
-    category: 'wings',
-    badge: 'VALUE',
-    flavors: ['Spicy', 'BBQ'],
-    description: 'Crispy, seasoned chicken wings. Ten pieces. Choose Spicy or BBQ flavor.',
-    image: 'https://images.unsplash.com/photo-1527477321005-4d45d724b8c4?auto=format&fit=crop&w=800&q=80'
+    id: 'drinks',
+    label: 'Drinks & Sweets',
+    title: 'Drinks & Something Sweet',
+    tagline: 'Cool down. Sweeten up.',
+    items: [
+      {
+        id: 'drink-kenkey',
+        name: 'Ice Kenkey',
+        price: 15,
+        badge: 'Local favourite',
+        description: 'Refreshing & creamy.',
+        thumb: kenkeyPhoto,
+      },
+      { id: 'drink-sobolo', name: 'Sobolo', price: 10, description: 'Chilled hibiscus drink.' },
+      {
+        id: 'drink-pineapple',
+        name: 'Pineapple Juice',
+        price: 15,
+        description: 'Pure goodness.',
+        thumb: pineapplePhoto,
+      },
+      {
+        id: 'sweet-sago',
+        name: 'Sweet Sago Cloud',
+        price: 50,
+        description: 'Light, sweet and fruity.',
+        options: { label: 'Flavour', choices: ['Mango', 'Strawberry', 'Banana'] },
+        thumb: sagoPhoto,
+      },
+      {
+        id: 'sweet-parfait',
+        name: 'Parfait',
+        price: 50,
+        description: 'Yogurt, granola and two toppings of fruit.',
+        thumb: parfaitPhoto,
+      },
+    ],
   },
   {
-    id: 'mozz-5',
-    name: 'Mozzarella Sticks · 5 pieces',
-    price: 60,
-    category: 'wings',
-    description: 'Golden, gooey mozzarella sticks. Five pieces. Served with special dipping sauce.',
-    image: 'https://images.unsplash.com/photo-1548340742-b8332e25c24b?auto=format&fit=crop&w=800&q=80'
+    id: 'extras',
+    label: 'Extras',
+    title: 'Extras',
+    tagline: 'Add a little extra to your favourite meal.',
+    items: [
+      { id: 'extra-sausage', name: 'Sausage', price: 5 },
+      { id: 'extra-egg', name: 'Egg', price: 5 },
+      { id: 'extra-chicken', name: 'Chicken', price: 15 },
+      { id: 'extra-fries', name: 'Fries', price: 25 },
+    ],
   },
-  {
-    id: 'mozz-10',
-    name: 'Mozzarella Sticks · 10 pieces',
-    price: 115,
-    category: 'wings',
-    description: 'Golden, gooey mozzarella sticks. Ten pieces. Served with special dipping sauce.',
-    image: 'https://images.unsplash.com/photo-1548340742-b8332e25c24b?auto=format&fit=crop&w=800&q=80'
-  },
-
-  // --- DRINKS & SOMETHING SWEET ---
-  {
-    id: 'drink-kenkey',
-    name: 'Ice Kenkey',
-    price: 15,
-    category: 'drinks',
-    badge: 'LOCAL FAVOURITE',
-    description: 'Refreshing & creamy chilled local delicacy with sweet condensed milk.',
-    image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 'drink-sobolo',
-    name: 'Sobolo',
-    price: 10,
-    category: 'drinks',
-    badge: 'ICE COLD',
-    description: 'Traditional spiced chilled hibiscus drink with ginger, cloves & pineapple zest.',
-    image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 'drink-pineapple',
-    name: 'Pineapple Juice',
-    price: 15,
-    category: 'drinks',
-    description: 'Pure goodness. Freshly squeezed Ghanaian sweet pineapple.',
-    image: 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 'sweet-sago',
-    name: 'Sweet Sago Cloud',
-    price: 50,
-    category: 'drinks',
-    flavors: ['Mango', 'Strawberry', 'Banana'],
-    description: 'Velvety sweet dessert cloud. Choose your flavor: Mango, Strawberry, or Banana.',
-    image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 'sweet-parfait',
-    name: 'Parfait',
-    price: 50,
-    category: 'drinks',
-    description: 'Creamy yogurt, crunchy golden granola and two toppings of fresh fruit.',
-    image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80'
-  },
-
-  // --- EXTRAS ---
-  {
-    id: 'extra-sausage',
-    name: 'Extra Sausage',
-    price: 5,
-    category: 'extras',
-    description: 'Add sausage to any order.'
-  },
-  {
-    id: 'extra-egg',
-    name: 'Extra Egg',
-    price: 5,
-    category: 'extras',
-    description: 'Add egg to any order.'
-  },
-  {
-    id: 'extra-chicken',
-    name: 'Extra Chicken',
-    price: 15,
-    category: 'extras',
-    description: 'Add seasoned chicken to any order.'
-  },
-  {
-    id: 'extra-fries',
-    name: 'Fries',
-    price: 25,
-    category: 'extras',
-    description: 'Crispy hot seasoned potato fries.'
-  }
 ];
 
+const ALL_ITEMS = MENU.flatMap((s) => s.items);
+const findItem = (id: string) => ALL_ITEMS.find((i) => i.id === id);
+
+// Cart lines are keyed by "itemId|option" so the same dish in two flavours stays separate.
+const lineKey = (id: string, option?: string) => (option ? `${id}|${option}` : id);
+const parseKey = (key: string) => {
+  const [id, option] = key.split('|');
+  return { id, option };
+};
+
+const SPICE_LEVELS = ['Mild', 'Spicy', 'Hot'] as const;
+const ORDER_TYPES = ['Pick up', 'Delivery'] as const;
+
+const money = (n: number) => `GH₵${n}`;
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState<string>('salads');
-  const [cart, setCart] = useState<{ [id: string]: number }>({});
-  const [spiceLevel, setSpiceLevel] = useState<'Mild' | 'Spicy' | 'Hot'>('Mild');
-  const [orderType, setOrderType] = useState<'Delivery' | 'Pick up'>('Delivery');
-  const [allergyNote, setAllergyNote] = useState<string>('');
-  const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
+  const [cart, setCart] = useState<Record<string, number>>({});
+  const [choices, setChoices] = useState<Record<string, string>>({});
+  const [activeSection, setActiveSection] = useState(MENU[0].id);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [spiceLevel, setSpiceLevel] = useState<(typeof SPICE_LEVELS)[number]>('Mild');
+  const [orderType, setOrderType] = useState<(typeof ORDER_TYPES)[number]>('Pick up');
+  const [address, setAddress] = useState('');
+  const [allergyNote, setAllergyNote] = useState('');
 
-  const categories = [
-    { id: 'salads', label: 'Salads' },
-    { id: 'noodles', label: 'Noodles / Stir Fry Pasta' },
-    { id: 'penne', label: 'Penne Pasta' },
-    { id: 'gizdodo', label: 'Gizdodo' },
-    { id: 'wings', label: 'Wings & Snacks' },
-    { id: 'drinks', label: 'Drinks & Sweets' },
-    { id: 'extras', label: 'Extras' },
-  ];
+  const pillsRef = useRef<HTMLDivElement>(null);
+  const clickScrolling = useRef(false);
 
-  const addToCart = (id: string) => {
-    setCart((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
-  };
-
-  const removeFromCart = (id: string) => {
-    setCart((prev) => {
-      const copy = { ...prev };
-      if (copy[id] > 1) {
-        copy[id] -= 1;
-      } else {
-        delete copy[id];
+  // Highlight the category pill for the section currently on screen.
+  useEffect(() => {
+    const onScroll = () => {
+      if (clickScrolling.current) return;
+      const offset = 150;
+      let current = MENU[0].id;
+      for (const s of MENU) {
+        const el = document.getElementById(s.id);
+        if (el && el.getBoundingClientRect().top - offset <= 0) current = s.id;
       }
-      return copy;
-    });
+      setActiveSection(current);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Keep the active pill visible in the horizontal pill bar.
+  useEffect(() => {
+    const bar = pillsRef.current;
+    const pill = bar?.querySelector<HTMLElement>(`[data-pill="${activeSection}"]`);
+    if (!bar || !pill) return;
+    const left = pill.offsetLeft - bar.clientWidth / 2 + pill.clientWidth / 2;
+    bar.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+  }, [activeSection]);
+
+  useEffect(() => {
+    document.body.style.overflow = isCartOpen ? 'hidden' : '';
+  }, [isCartOpen]);
+
+  const jumpTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    setActiveSection(id);
+    clickScrolling.current = true;
+    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 130, behavior: 'smooth' });
+    window.setTimeout(() => (clickScrolling.current = false), 700);
   };
 
-  const totalCount = useMemo(() => {
-    return Object.values(cart).reduce((a, b) => a + b, 0);
-  }, [cart]);
+  const add = (key: string) => setCart((c) => ({ ...c, [key]: (c[key] || 0) + 1 }));
+  const remove = (key: string) =>
+    setCart((c) => {
+      const next = { ...c };
+      if (next[key] > 1) next[key] -= 1;
+      else delete next[key];
+      return next;
+    });
 
-  const totalPrice = useMemo(() => {
-    return Object.entries(cart).reduce((sum, [id, count]) => {
-      const item = MENU_ITEMS.find((m) => m.id === id);
-      return sum + (item ? item.price * count : 0);
-    }, 0);
-  }, [cart]);
+  const selectedOption = (item: Product) =>
+    item.options ? choices[item.id] ?? item.options.choices[0] : undefined;
 
-  const displayedItems = MENU_ITEMS.filter((item) => item.category === activeTab);
+  const { totalCount, totalPrice } = useMemo(() => {
+    let count = 0;
+    let price = 0;
+    for (const [key, qty] of Object.entries(cart)) {
+      const item = findItem(parseKey(key).id);
+      if (!item) continue;
+      count += qty;
+      price += item.price * qty;
+    }
+    return { totalCount: count, totalPrice: price };
+  }, [cart]);
 
   const sendWhatsAppOrder = () => {
     if (totalCount === 0) return;
-
-    let msg = `*NEW ORDER - RISA (CRAFTED FOR CRAVINGS)*\n`;
-    msg += `--------------------------------\n`;
-    msg += `*Order Type:* ${orderType}\n`;
-    msg += `*Spice Level:* ${spiceLevel}\n`;
-    if (allergyNote.trim()) {
-      msg += `*Special Instructions/Allergies:* ${allergyNote.trim()}\n`;
-    }
-    msg += `\n*ORDER ITEMS:*\n`;
-
-    Object.entries(cart).forEach(([id, qty]) => {
-      const item = MENU_ITEMS.find((m) => m.id === id);
-      if (item) {
-        msg += `• ${qty}x ${item.name} = GH₵${item.price * qty}\n`;
-      }
+    const lines = Object.entries(cart).map(([key, qty]) => {
+      const { id, option } = parseKey(key);
+      const item = findItem(id)!;
+      const section = MENU.find((s) => s.items.includes(item))!;
+      const name = section.title === item.name ? item.name : `${section.title} – ${item.name}`;
+      return `• ${qty} × ${name}${option ? ` (${option})` : ''} = ${money(item.price * qty)}`;
     });
-
-    msg += `--------------------------------\n`;
-    msg += `*TOTAL AMOUNT: GH₵${totalPrice}*\n\n`;
-    msg += `_Please confirm my order & delivery details._`;
-
-    const encoded = encodeURIComponent(msg);
-    window.open(`https://wa.me/233241280476?text=${encoded}`, '_blank');
+    const msg = [
+      '*NEW ORDER – RISA*',
+      '',
+      ...lines,
+      '',
+      `*Total: ${money(totalPrice)}*`,
+      '',
+      `Order type: ${orderType}`,
+      orderType === 'Delivery' && address.trim() ? `Delivery location: ${address.trim()}` : null,
+      `Spice level: ${spiceLevel}`,
+      allergyNote.trim() ? `Allergies / notes: ${allergyNote.trim()}` : null,
+    ]
+      .filter((l) => l !== null)
+      .join('\n');
+    window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
   return (
-    <div className="min-h-screen bg-[#141212] text-[#EDE8E1] font-sans pb-36">
-      {/* Top Header */}
-      <header className="sticky top-0 z-40 bg-[#1A1616]/95 backdrop-blur-md border-b border-white/5 px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <img
-            src={risaLogo}
-            alt="RISA Logo"
-            className="w-10 h-10 rounded-lg object-contain bg-[#1F1A1A] p-1 border border-white/10"
-            onError={(e) => {
-              (e.target as HTMLElement).style.display = 'none';
-            }}
-          />
-          <div>
-            <h1 className="font-serif tracking-widest text-lg font-bold text-white leading-tight">RISA</h1>
-            <p className="text-[10px] tracking-[0.25em] text-[#C83832] uppercase font-semibold">CRAFTED FOR CRAVINGS</p>
-          </div>
+    <div className="min-h-screen bg-[#141111] text-[#EDE6DF] font-sans pb-28">
+      {/* Header */}
+      <header className="sticky top-0 z-40 bg-[#191515]/95 backdrop-blur-md border-b border-white/5">
+        <div className="max-w-2xl mx-auto px-4 h-16 flex items-center justify-between">
+          <a href="#top" className="flex items-center gap-3" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            <img src={risaLogo} alt="" className="w-10 h-10 rounded-xl object-cover border border-white/10" />
+            <div>
+              <p className="font-serif text-xl font-bold tracking-wide text-white leading-none">RISA</p>
+              <p className="font-mono text-[10px] tracking-[0.22em] text-neutral-400 mt-1">CRAFTED FOR CRAVINGS</p>
+            </div>
+          </a>
+          <button
+            onClick={() => setIsCartOpen(true)}
+            aria-label="Open your order"
+            className="relative w-12 h-10 rounded-xl bg-[#C23B33] text-white flex items-center justify-center active:scale-95 transition"
+          >
+            <ShoppingBag size={19} />
+            {totalCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-white text-[#C23B33] text-[11px] font-bold rounded-full min-w-5 h-5 px-1 flex items-center justify-center">
+                {totalCount}
+              </span>
+            )}
+          </button>
         </div>
-
-        <button
-          onClick={() => setIsCartOpen(true)}
-          className="w-10 h-10 rounded-xl bg-[#C83832] text-white flex items-center justify-center relative shadow-lg shadow-[#C83832]/30 active:scale-95 transition"
-        >
-          <ShoppingBag size={19} />
-          {totalCount > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 bg-white text-[#C83832] font-black text-[11px] rounded-full w-5 h-5 flex items-center justify-center shadow">
-              {totalCount}
-            </span>
-          )}
-        </button>
       </header>
 
-      {/* Info Banner */}
-      <div className="bg-[#1C1717] px-4 py-2 border-b border-white/5 flex flex-wrap items-center justify-between text-[11px] text-neutral-400 gap-2">
-        <div className="flex items-center gap-1.5">
-          <Clock size={12} className="text-[#C83832]" />
-          <span>Friday – Sunday: 12:00 PM – 8:00 PM</span>
+      {/* Category pills */}
+      <nav className="sticky top-16 z-30 bg-[#141111]/95 backdrop-blur-md border-b border-white/5">
+        <div ref={pillsRef} className="relative max-w-2xl mx-auto px-4 py-3 flex gap-2 overflow-x-auto no-scrollbar">
+          {MENU.map((s) => {
+            const active = s.id === activeSection;
+            return (
+              <button
+                key={s.id}
+                data-pill={s.id}
+                onClick={() => jumpTo(s.id)}
+                className={`whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+                  active ? 'bg-[#C23B33] text-white' : 'bg-[#221D1D] text-neutral-400 hover:text-white'
+                }`}
+              >
+                {s.label}
+              </button>
+            );
+          })}
         </div>
-        <div className="flex items-center gap-1.5">
-          <Phone size={12} className="text-[#C83832]" />
-          <a href="tel:0241280476" className="text-white hover:text-[#C83832] font-medium">024 128 0476</a>
+      </nav>
+
+      <main id="top" className="max-w-2xl mx-auto px-4">
+        {/* Info strip */}
+        <div className="mt-5 grid grid-cols-3 gap-2 text-center">
+          <div className="rounded-xl bg-[#1D1818] border border-white/5 py-3 px-2">
+            <Clock size={15} className="mx-auto text-[#E0544B]" />
+            <p className="text-[11px] text-white font-medium mt-1.5">Fri – Sun</p>
+            <p className="text-[11px] text-neutral-400">12:00 – 8:00pm</p>
+          </div>
+          <div className="rounded-xl bg-[#1D1818] border border-white/5 py-3 px-2">
+            <Bike size={15} className="mx-auto text-[#E0544B]" />
+            <p className="text-[11px] text-white font-medium mt-1.5">Pick up &</p>
+            <p className="text-[11px] text-neutral-400">delivery</p>
+          </div>
+          <a href={`tel:${PHONE_TEL}`} className="rounded-xl bg-[#1D1818] border border-white/5 py-3 px-2 block">
+            <Phone size={15} className="mx-auto text-[#E0544B]" />
+            <p className="text-[11px] text-white font-medium mt-1.5">Call / WhatsApp</p>
+            <p className="text-[11px] text-neutral-400">{PHONE_DISPLAY}</p>
+          </a>
         </div>
-      </div>
 
-      {/* Category Pills Navigation */}
-      <div className="sticky top-[61px] z-30 bg-[#141212]/95 backdrop-blur-md py-3 px-4 overflow-x-auto no-scrollbar flex items-center gap-2 border-b border-white/5">
-        {categories.map((cat) => {
-          const active = activeTab === cat.id;
-          return (
-            <button
-              key={cat.id}
-              onClick={() => setActiveTab(cat.id)}
-              className={`whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all ${
-                active
-                  ? 'bg-[#C83832] text-white shadow-md shadow-[#C83832]/30'
-                  : 'bg-[#211C1C] text-neutral-400 hover:text-white border border-white/5'
-              }`}
-            >
-              {cat.label}
-            </button>
-          );
-        })}
-      </div>
+        {MENU.map((section) => (
+          <section key={section.id} id={section.id} className="pt-10">
+            <h2 className="font-serif text-[32px] leading-tight font-bold text-white">{section.title}</h2>
+            <p className="text-neutral-400 mt-1">{section.tagline}</p>
 
-      {/* Items Section */}
-      <main className="max-w-xl mx-auto px-4 pt-6 space-y-4">
-        {displayedItems.map((item) => (
-          <div
-            key={item.id}
-            className="bg-[#1E1919] rounded-2xl border border-white/5 overflow-hidden shadow-xl"
-          >
-            {item.image && (
-              <div className="relative h-44 w-full overflow-hidden bg-black/40">
+            {section.photo && (
+              <div className="mt-5 rounded-3xl overflow-hidden border border-white/5 aspect-[16/10] bg-[#1D1818]">
                 <img
-                  src={item.image}
-                  alt={item.name}
+                  src={section.photo}
+                  alt={section.title}
+                  loading="lazy"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1E1919] via-transparent to-black/20" />
-
-                {item.badge && (
-                  <span className="absolute top-3 left-3 bg-[#C83832] text-white text-[9px] font-black uppercase px-2.5 py-1 rounded-full shadow">
-                    {item.badge}
-                  </span>
-                )}
-
-                {/* RISA Brand Logo Placed On Drinks & Sweet Items */}
-                {item.category === 'drinks' && (
-                  <div className="absolute top-3 right-3 bg-black/75 backdrop-blur-md border border-white/20 rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-md">
-                    <img 
-                      src={risaLogo} 
-                      alt="RISA" 
-                      className="w-3.5 h-3.5 rounded-full object-cover" 
-                      onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
-                    />
-                    <span className="text-[9px] font-serif font-bold text-white tracking-widest">RISA DRINK</span>
-                  </div>
-                )}
               </div>
             )}
 
-            <div className="p-4 flex flex-col justify-between">
-              <div>
-                <h3 className="font-serif text-lg font-semibold text-white tracking-wide">{item.name}</h3>
-                <p className="text-xs text-neutral-400 mt-1 leading-relaxed">{item.description}</p>
-                {item.optionsNote && (
-                  <p className="text-[11px] text-[#E0A855] mt-1 font-medium">{item.optionsNote}</p>
-                )}
-                {item.flavors && (
-                  <p className="text-[11px] text-[#C83832] mt-1 font-semibold">
-                    Flavors: {item.flavors.join(' · ')}
-                  </p>
-                )}
-              </div>
-
-              <div className="mt-4 flex items-center justify-between pt-3 border-t border-white/5">
-                <span className="font-serif text-xl font-bold text-[#E54842]">
-                  GH₵{item.price}
-                </span>
-
-                {cart[item.id] ? (
-                  <div className="flex items-center gap-2 bg-[#282121] rounded-xl px-2.5 py-1.5 border border-white/10">
-                    <button
-                      onClick={() => removeFromCart(item.id)}
-                      className="w-6 h-6 flex items-center justify-center rounded bg-neutral-800 text-white active:scale-95"
-                    >
-                      <Minus size={13} />
-                    </button>
-                    <span className="w-5 text-center text-xs font-bold text-white font-mono">
-                      {cart[item.id]}
-                    </span>
-                    <button
-                      onClick={() => addToCart(item.id)}
-                      className="w-6 h-6 flex items-center justify-center rounded bg-[#C83832] text-white active:scale-95"
-                    >
-                      <Plus size={13} />
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => addToCart(item.id)}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#282121] hover:bg-[#C83832] text-white text-xs font-semibold border border-white/10 transition-colors active:scale-95"
+            <div className="mt-4 space-y-3">
+              {section.items.map((item) => {
+                const option = selectedOption(item);
+                const key = lineKey(item.id, option);
+                const qty = cart[key] || 0;
+                return (
+                  <article
+                    key={item.id}
+                    className={`rounded-3xl bg-[#211C1C] border p-5 transition-colors ${
+                      qty ? 'border-[#C23B33]/50' : 'border-white/5'
+                    }`}
                   >
-                    <Plus size={14} />
-                    <span>Add</span>
-                  </button>
-                )}
-              </div>
+                    <div className="flex gap-4">
+                      <div className="flex-1 min-w-0">
+                        {item.badge && (
+                          <span className="inline-block mb-2 font-mono text-[10px] uppercase tracking-widest text-[#E0544B] bg-[#C23B33]/10 border border-[#C23B33]/30 rounded-full px-2.5 py-0.5">
+                            {item.badge}
+                          </span>
+                        )}
+                        <h3 className="font-serif text-xl font-semibold text-white leading-snug">{item.name}</h3>
+                        {item.description && (
+                          <p className="text-[15px] text-neutral-400 mt-1.5 leading-relaxed">{item.description}</p>
+                        )}
+                        {item.note && <p className="text-[13px] text-[#E3B062] mt-1.5">{item.note}</p>}
+                      </div>
+                      {item.thumb && (
+                        <img
+                          src={item.thumb}
+                          alt={item.name}
+                          loading="lazy"
+                          className="w-24 h-24 rounded-2xl object-cover shrink-0 border border-white/5"
+                        />
+                      )}
+                    </div>
+
+                    {item.options && (
+                      <div className="mt-3 flex flex-wrap items-center gap-2">
+                        <span className="text-xs text-neutral-500 mr-1">{item.options.label}</span>
+                        {item.options.choices.map((c) => (
+                          <button
+                            key={c}
+                            onClick={() => setChoices((p) => ({ ...p, [item.id]: c }))}
+                            className={`px-3 py-1 rounded-full text-xs border transition-colors ${
+                              option === c
+                                ? 'bg-white text-[#141111] border-white'
+                                : 'border-white/15 text-neutral-300 hover:border-white/40'
+                            }`}
+                          >
+                            {c}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="font-serif text-2xl font-bold text-[#E0544B]">{money(item.price)}</span>
+                      {qty ? (
+                        <div className="flex items-center gap-3 bg-[#2C2525] rounded-xl p-1 border border-white/10">
+                          <button
+                            onClick={() => remove(key)}
+                            aria-label={`Remove one ${item.name}`}
+                            className="w-9 h-9 rounded-lg flex items-center justify-center text-white hover:bg-white/10"
+                          >
+                            <Minus size={16} />
+                          </button>
+                          <span className="w-4 text-center font-semibold text-white">{qty}</span>
+                          <button
+                            onClick={() => add(key)}
+                            aria-label={`Add one more ${item.name}`}
+                            className="w-9 h-9 rounded-lg flex items-center justify-center bg-[#C23B33] text-white"
+                          >
+                            <Plus size={16} />
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => add(key)}
+                          className="flex items-center gap-2 px-5 h-11 rounded-xl bg-[#2C2525] border border-white/10 text-white font-medium hover:bg-[#C23B33] hover:border-[#C23B33] active:scale-95 transition"
+                        >
+                          <Plus size={16} />
+                          Add
+                        </button>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
             </div>
-          </div>
+          </section>
         ))}
+
+        {/* Good to know */}
+        <section className="pt-10">
+          <div className="rounded-3xl bg-[#211C1C] border border-white/5 p-5 space-y-3 text-[15px]">
+            <p className="text-white font-serif text-xl font-semibold">Good to know</p>
+            <p className="text-neutral-400">
+              <span className="text-white">Spice level:</span> Mild · Spicy · Hot — choose when you order.
+            </p>
+            <p className="text-neutral-400 flex gap-2">
+              <AlertCircle size={18} className="text-[#E3B062] shrink-0 mt-0.5" />
+              Kindly let us know if you are allergic to something.
+            </p>
+          </div>
+        </section>
+
+        <footer className="pt-10 pb-6 text-center text-sm text-neutral-500">
+          <p className="font-serif text-lg text-white">RISA</p>
+          <p className="mt-1">Friday – Sunday · 12:00 – 8:00pm · Pick up & delivery</p>
+          <a href={`tel:${PHONE_TEL}`} className="mt-1 inline-block text-neutral-300">
+            Call / WhatsApp {PHONE_DISPLAY}
+          </a>
+        </footer>
       </main>
 
-      {/* Floating Bottom Cart Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#161212]/95 backdrop-blur-md border-t border-white/10 px-4 py-3">
-        <div className="max-w-xl mx-auto flex items-center justify-between">
+      {/* Bottom order bar */}
+      <div className="fixed bottom-0 inset-x-0 z-40 bg-[#191515]/95 backdrop-blur-md border-t border-white/10">
+        <div className="max-w-2xl mx-auto px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] flex items-center justify-between gap-4">
           <div>
-            <p className="font-serif text-lg font-bold text-white leading-tight">GH₵{totalPrice}</p>
-            <p className="text-[11px] text-neutral-400">
-              {totalCount === 0 ? 'Your order is waiting' : `${totalCount} item(s) selected`}
+            <p className="font-serif text-2xl font-bold text-white leading-none">{money(totalPrice)}</p>
+            <p className="text-sm text-neutral-400 mt-1">
+              {totalCount === 0 ? 'Your order is waiting' : `${totalCount} item${totalCount > 1 ? 's' : ''} in your order`}
             </p>
           </div>
           <button
-            onClick={() => setIsCartOpen(true)}
-            className="px-5 py-2.5 rounded-xl bg-[#C83832] hover:bg-[#b02f2a] text-white text-xs font-bold tracking-wider uppercase flex items-center gap-2 shadow-lg shadow-[#C83832]/30 active:scale-95 transition-all"
+            onClick={() => (totalCount ? setIsCartOpen(true) : jumpTo(MENU[0].id))}
+            className="h-12 px-6 rounded-xl bg-[#C23B33] text-white font-medium flex items-center gap-2 active:scale-95 transition"
           >
-            <span>View menu / Cart</span>
-            <ArrowRight size={15} />
+            {totalCount ? 'View order' : 'View menu'}
+            <ArrowRight size={17} />
           </button>
         </div>
       </div>
 
-      {/* Cart & WhatsApp Checkout Modal */}
+      {/* Order sheet */}
       {isCartOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-          <div className="bg-[#181313] w-full max-w-lg rounded-t-3xl sm:rounded-3xl border border-white/10 max-h-[90vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom-5">
-            {/* Header */}
-            <div className="p-4 border-b border-white/10 flex items-center justify-between">
+        <div
+          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center"
+          onClick={() => setIsCartOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#191515] w-full max-w-lg rounded-t-3xl sm:rounded-3xl border border-white/10 max-h-[90vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom-5"
+          >
+            <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
               <div>
-                <h2 className="font-serif text-lg font-bold text-white">Your Craving Bag</h2>
-                <p className="text-xs text-neutral-400">RISA · Friday to Sunday 12:00–8:00 PM</p>
+                <h2 className="font-serif text-xl font-bold text-white">Your order</h2>
+                <p className="text-xs text-neutral-400">Sent to RISA on WhatsApp</p>
               </div>
               <button
                 onClick={() => setIsCartOpen(false)}
-                className="w-8 h-8 rounded-full bg-neutral-800 text-neutral-300 flex items-center justify-center hover:text-white"
+                aria-label="Close"
+                className="w-9 h-9 rounded-full bg-white/5 text-neutral-300 flex items-center justify-center"
               >
                 <X size={18} />
               </button>
             </div>
 
-            {/* List */}
-            <div className="p-4 overflow-y-auto space-y-4">
+            <div className="p-5 overflow-y-auto space-y-5">
               {totalCount === 0 ? (
                 <div className="text-center py-10">
                   <ShoppingBag size={32} className="mx-auto text-neutral-600 mb-2" />
-                  <p className="text-neutral-400 text-sm">Your craving bag is empty.</p>
+                  <p className="text-neutral-400">Nothing here yet — add something tasty.</p>
                 </div>
               ) : (
                 <>
-                  <div className="space-y-2.5">
-                    {Object.entries(cart).map(([id, qty]) => {
-                      const item = MENU_ITEMS.find((m) => m.id === id);
+                  <div className="space-y-2">
+                    {Object.entries(cart).map(([key, qty]) => {
+                      const { id, option } = parseKey(key);
+                      const item = findItem(id);
                       if (!item) return null;
+                      const section = MENU.find((s) => s.items.includes(item))!;
                       return (
-                        <div key={id} className="flex items-center justify-between bg-[#211A1A] p-3 rounded-xl border border-white/5">
-                          <div className="flex-1 pr-3">
-                            <h4 className="text-sm font-semibold text-white">{item.name}</h4>
-                            <p className="text-xs text-[#E54842] font-mono mt-0.5">GH₵{item.price * qty}</p>
+                        <div key={key} className="flex items-center gap-3 bg-[#221D1D] p-3 rounded-2xl">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[11px] uppercase tracking-wider text-neutral-500">{section.label}</p>
+                            <p className="text-sm font-medium text-white">
+                              {item.name}
+                              {option && <span className="text-neutral-400"> · {option}</span>}
+                            </p>
+                            <p className="text-sm text-[#E0544B] mt-0.5">{money(item.price * qty)}</p>
                           </div>
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => removeFromCart(id)}
-                              className="w-6 h-6 rounded bg-neutral-800 text-white flex items-center justify-center"
+                              onClick={() => remove(key)}
+                              aria-label="Remove one"
+                              className="w-8 h-8 rounded-lg bg-white/5 text-white flex items-center justify-center"
                             >
-                              <Minus size={12} />
+                              <Minus size={14} />
                             </button>
-                            <span className="text-xs font-mono font-bold w-4 text-center">{qty}</span>
+                            <span className="w-4 text-center text-sm font-semibold">{qty}</span>
                             <button
-                              onClick={() => addToCart(id)}
-                              className="w-6 h-6 rounded bg-[#C83832] text-white flex items-center justify-center"
+                              onClick={() => add(key)}
+                              aria-label="Add one"
+                              className="w-8 h-8 rounded-lg bg-[#C23B33] text-white flex items-center justify-center"
                             >
-                              <Plus size={12} />
+                              <Plus size={14} />
                             </button>
                           </div>
                         </div>
@@ -566,83 +656,83 @@ export default function App() {
                     })}
                   </div>
 
-                  {/* Pick up or Delivery */}
-                  <div>
-                    <label className="text-xs font-medium text-neutral-300 block mb-1.5">Order Type</label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {(['Delivery', 'Pick up'] as const).map((type) => (
-                        <button
-                          key={type}
-                          onClick={() => setOrderType(type)}
-                          className={`py-2 rounded-xl text-xs font-semibold border ${
-                            orderType === type
-                              ? 'bg-[#C83832] text-white border-[#C83832]'
-                              : 'bg-[#211A1A] text-neutral-400 border-white/5'
-                          }`}
-                        >
-                          {type}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                  <Choice<(typeof ORDER_TYPES)[number]> label="Pick up or delivery" options={ORDER_TYPES} value={orderType} onChange={setOrderType} />
+                  {orderType === 'Delivery' && (
+                    <input
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      placeholder="Delivery location"
+                      className="w-full bg-[#221D1D] border border-white/10 rounded-xl px-3 py-3 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#C23B33]"
+                    />
+                  )}
+                  <Choice<(typeof SPICE_LEVELS)[number]> label="Spice level" options={SPICE_LEVELS} value={spiceLevel} onChange={setSpiceLevel} />
 
-                  {/* Spice Level */}
                   <div>
-                    <label className="text-xs font-medium text-neutral-300 block mb-1.5">Spice Level</label>
-                    <div className="grid grid-cols-3 gap-2">
-                      {(['Mild', 'Spicy', 'Hot'] as const).map((spice) => (
-                        <button
-                          key={spice}
-                          onClick={() => setSpiceLevel(spice)}
-                          className={`py-2 rounded-xl text-xs font-semibold border ${
-                            spiceLevel === spice
-                              ? 'bg-[#C83832] text-white border-[#C83832]'
-                              : 'bg-[#211A1A] text-neutral-400 border-white/5'
-                          }`}
-                        >
-                          {spice}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Allergy Notice */}
-                  <div>
-                    <label className="text-xs font-medium text-neutral-300 flex items-center gap-1 mb-1.5">
-                      <AlertCircle size={13} className="text-[#C83832]" />
-                      <span>Kindly let us know if you are allergic to something:</span>
+                    <label className="text-sm text-neutral-300 flex items-center gap-1.5 mb-2">
+                      <AlertCircle size={14} className="text-[#E3B062]" />
+                      Allergic to something? Let us know
                     </label>
                     <textarea
                       value={allergyNote}
                       onChange={(e) => setAllergyNote(e.target.value)}
-                      placeholder="e.g. No shellfish, delivery location details..."
+                      placeholder="e.g. no shrimp"
                       rows={2}
-                      className="w-full bg-[#211A1A] border border-white/10 rounded-xl p-3 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-[#C83832]"
+                      className="w-full bg-[#221D1D] border border-white/10 rounded-xl p-3 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#C23B33]"
                     />
                   </div>
                 </>
               )}
             </div>
 
-            {/* Footer */}
             {totalCount > 0 && (
-              <div className="p-4 border-t border-white/10 bg-[#1A1515]">
+              <div className="p-5 border-t border-white/10 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
                 <div className="flex justify-between items-center mb-3">
-                  <span className="text-xs text-neutral-400">Total payable</span>
-                  <span className="font-serif text-2xl font-bold text-white">GH₵{totalPrice}</span>
+                  <span className="text-sm text-neutral-400">Total</span>
+                  <span className="font-serif text-2xl font-bold text-white">{money(totalPrice)}</span>
                 </div>
                 <button
                   onClick={sendWhatsAppOrder}
-                  className="w-full py-3.5 rounded-xl bg-[#25D366] hover:bg-[#20b858] text-black font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#25D366]/20 active:scale-98 transition"
+                  className="w-full h-13 py-3.5 rounded-xl bg-[#25D366] text-[#0B2B17] font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition"
                 >
-                  <Send size={16} />
-                  <span>Send Order to WhatsApp (024 128 0476)</span>
+                  <Send size={17} />
+                  Send order on WhatsApp
                 </button>
               </div>
             )}
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function Choice<T extends string>({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: readonly T[];
+  value: T;
+  onChange: (v: T) => void;
+}) {
+  return (
+    <div>
+      <p className="text-sm text-neutral-300 mb-2">{label}</p>
+      <div className="flex gap-2">
+        {options.map((o) => (
+          <button
+            key={o}
+            onClick={() => onChange(o)}
+            className={`flex-1 py-2.5 rounded-xl text-sm font-medium border transition-colors ${
+              value === o ? 'bg-[#C23B33] text-white border-[#C23B33]' : 'bg-[#221D1D] text-neutral-400 border-white/5'
+            }`}
+          >
+            {o}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
