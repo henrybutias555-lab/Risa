@@ -4,6 +4,10 @@ import {
   ArrowRight,
   ArrowUp,
   Bike,
+  ChefHat,
+  ChevronRight,
+  Smile,
+  UtensilsCrossed,
   Clock,
   CloudRain,
   Info,
@@ -16,6 +20,7 @@ import {
   X,
 } from "lucide-react";
 
+import risaWordmark from "./assets/risa-wordmark.png";
 import risaLogo from "./assets/risa-logo-design.jpeg";
 import saladsPhoto from "./assets/menu-photos/salad-photo.jpg";
 import noodlesPhoto from "./assets/menu-photos/noodles-risa-enhanced.jpg";
@@ -543,66 +548,118 @@ export default function App() {
       </header>
 
       {/* Welcome banner */}
-      <section className="relative overflow-hidden bg-[#E4EADC]">
-        <svg
-          aria-hidden="true"
-          className="absolute -top-10 -right-24 w-[520px] h-[520px] text-[#C9D5BE]"
-          viewBox="0 0 200 200"
-        >
-          <path
-            fill="currentColor"
-            d="M44.7,-58.4C57.1,-49.5,66,-35.4,70.6,-19.8C75.2,-4.2,75.5,12.9,68.6,26.6C61.7,40.3,47.6,50.6,32.6,57.9C17.6,65.2,1.7,69.5,-15.5,68.4C-32.7,67.3,-51.2,60.8,-61.6,47.8C-72,34.8,-74.3,15.3,-71,-2.6C-67.7,-20.5,-58.8,-36.8,-45.7,-45.6C-32.6,-54.4,-16.3,-55.7,0.3,-56.1C16.9,-56.5,32.3,-67.3,44.7,-58.4Z"
-            transform="translate(100 100)"
-          />
-        </svg>
-        <div className="relative max-w-2xl mx-auto px-4 pt-8 pb-14">
-          <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#D46A35] uppercase">
-            <span className="w-6 h-px bg-[#D46A35]" /> Crafted for cravings
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#F3E6D3] via-[#F6EDDF] to-[#F6F0E6]">
+        <div className="relative max-w-2xl mx-auto px-4 pt-6 pb-4 text-center">
+          <img src={risaWordmark} alt="RISA — Crafted for Cravings" className="w-[78%] max-w-sm mx-auto" />
+          <p className="font-script text-[25px] leading-tight text-[#1F3A2B] mt-3 whitespace-nowrap">
+            Where flavour meets every craving.
           </p>
-          <h1 className="font-serif text-[40px] leading-[1.1] font-bold text-[#1F3A2B] mt-3">
-            Food you’ll crave from the very first bite
-          </h1>
-          <p className="text-[15px] text-[#5F6F63] mt-3 max-w-md">
-            Ghanaian salad bowls, loaded noodles, wings and sweet treats — made fresh, ready for pick up or
-            delivery.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <button
-              onClick={() => jumpTo(MENU[0].id)}
-              className="h-12 px-6 rounded-full bg-[#D46A35] text-[#1F3A2B] font-medium flex items-center gap-2 shadow-lg shadow-[#D46A35]/25 active:scale-95 transition"
-            >
-              See menu
-              <ArrowRight size={17} />
-            </button>
-            <a
-              href={WHATSAPP_CHAT}
-              target="_blank"
-              rel="noreferrer"
-              className="h-12 px-6 rounded-full border border-[#1F3A2B]/20 bg-[#FFFCF7] text-[#1F3A2B] font-medium flex items-center gap-2"
-            >
-              <MessageCircle size={17} className="text-[#25D366]" />
-              WhatsApp us
-            </a>
-          </div>
-          <div className="relative mt-8">
-            <div className="rounded-[2rem] overflow-hidden bg-[#C9D5BE] shadow-[0_20px_40px_rgba(31,58,43,0.15)] aspect-[4/3]">
-              <img src={noodlesPhoto} alt="RISA noodles" className="w-full h-full object-cover" />
-            </div>
+          <div className="w-28 h-[3px] mx-auto mt-1 rounded-full bg-[#C9963F]" />
+          <p className="text-[15px] text-[#45574A] mt-4">Discover a little something delicious.</p>
+          <button
+            onClick={() => jumpTo(MENU[0].id)}
+            className="mt-5 h-12 px-7 rounded-full bg-[#1F3A2B] text-white font-medium inline-flex items-center gap-2 shadow-lg shadow-[#1F3A2B]/25 active:scale-95 transition"
+          >
+            Explore RISA
+            <ChevronRight size={18} />
+          </button>
+        </div>
+
+        <div className="relative max-w-2xl mx-auto px-4 pt-8 pb-16">
+          <div className="relative mx-auto w-[88%] aspect-square">
+            <div className="absolute inset-[6%] rounded-full bg-[#8A6A45]/25 blur-2xl" />
             <img
-              src={risaLogo}
-              alt="RISA logo"
-              className="absolute -bottom-6 right-5 w-20 h-20 rounded-full object-cover border-4 border-[#E4EADC] shadow-lg"
+              src={saladsPhoto}
+              alt="RISA salad bowl"
+              className="relative w-full h-full object-cover rounded-full border-[6px] border-[#FFFCF7] shadow-[0_24px_50px_rgba(60,40,20,0.25)]"
             />
+            <p className="absolute -top-9 -right-1 font-script text-[26px] leading-[1.05] text-[#1F3A2B] rotate-[-8deg] text-right">
+              Good Food.
+              <br />
+              Good Mood.
+            </p>
+            <span className="absolute bottom-4 left-0 text-3xl rotate-[-12deg]" aria-hidden="true">
+              🤎
+            </span>
           </div>
         </div>
         <svg
           aria-hidden="true"
-          className="absolute bottom-0 left-0 w-full h-10 text-[#F6F0E6]"
-          viewBox="0 0 1440 80"
+          className="absolute bottom-0 left-0 w-full h-14"
+          viewBox="0 0 1440 120"
           preserveAspectRatio="none"
         >
-          <path fill="currentColor" d="M0,40 C240,90 480,0 720,30 C960,60 1200,10 1440,40 L1440,80 L0,80 Z" />
+          <path fill="#F6F0E6" d="M0,80 C360,20 720,120 1080,60 C1260,30 1380,50 1440,60 L1440,120 L0,120 Z" />
         </svg>
+      </section>
+
+      {/* Why RISA */}
+      <section className="max-w-2xl mx-auto px-4 pt-2">
+        <SectionHeading>Why RISA?</SectionHeading>
+        <div className="mt-5 grid grid-cols-2 gap-x-3 gap-y-6">
+          {[
+            { icon: ChefHat, title: "Made with Love", text: "Every dish is prepared with care." },
+            { icon: UtensilsCrossed, title: "Irresistible Flavours", text: "A perfect blend of taste." },
+            { icon: Bike, title: "Fast & Reliable", text: "Pick-up & delivery available." },
+            { icon: Smile, title: "Customer First", text: "Your satisfaction is our priority." },
+          ].map(({ icon: Icon, title, text }) => (
+            <div key={title} className="text-center">
+              <span className="w-16 h-16 mx-auto rounded-full bg-[#F1DFC4] text-[#1F3A2B] flex items-center justify-center">
+                <Icon size={28} strokeWidth={1.8} />
+              </span>
+              <p className="font-semibold text-[#1F3A2B] mt-3">{title}</p>
+              <p className="text-sm text-[#5F6F63] mt-0.5">{text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Menu preview */}
+      <section className="max-w-2xl mx-auto pt-10">
+        <div className="px-4">
+          <SectionHeading>Our Menu Preview</SectionHeading>
+        </div>
+        <div className="mt-5 px-4 flex gap-3 overflow-x-auto no-scrollbar snap-x">
+          {[
+            { id: "mozzarella", label: "Mozzarella Sticks", photo: mozzarellaPhoto },
+            { id: "noodles", label: "Noodles & Pasta", photo: noodlesSectionPhoto },
+            { id: "wings", label: "Chicken Wings", photo: wingsPhoto },
+            { id: "gizdodo", label: "Gizdodo", photo: gizdodoPhoto },
+            { id: "drinks", label: "Drinks & More", photo: sagoPhoto },
+          ].map((c) => (
+            <button
+              key={c.id}
+              onClick={() => jumpTo(c.id)}
+              className="relative shrink-0 w-36 h-44 rounded-2xl overflow-hidden snap-start shadow-[0_8px_20px_rgba(31,58,43,0.15)]"
+            >
+              <img src={c.photo} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent pt-8 pb-2.5 text-white text-sm font-semibold">
+                {c.label}
+              </span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Come hungry band */}
+      <section className="relative mt-10 bg-[#1F3A2B] overflow-hidden">
+        <svg aria-hidden="true" className="absolute top-0 left-0 w-full h-6" viewBox="0 0 1440 40" preserveAspectRatio="none">
+          <path fill="#F6F0E6" d="M0,0 L1440,0 L1440,10 C1080,40 720,0 360,25 C200,35 80,20 0,15 Z" />
+        </svg>
+        <div className="relative max-w-2xl mx-auto px-4 pt-10 pb-8 text-center">
+          <p className="font-script text-[34px] leading-tight text-white">
+            Come hungry, leave happy! <span className="text-[#E7C27A]">♡</span>
+          </p>
+          <a
+            href={WHATSAPP_CHAT}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-5 h-12 px-7 rounded-full bg-[#E1B15A] text-[#1F3A2B] font-semibold inline-flex items-center gap-2 active:scale-95 transition"
+          >
+            <MessageCircle size={18} />
+            Order Now
+          </a>
+        </div>
       </section>
 
       {/* Category pills */}
@@ -1272,6 +1329,16 @@ function Field({
       <label className="block text-sm text-[#45574A] mb-2">{label}</label>
       {children}
       {error && <p className="text-xs text-[#C0392B] mt-1.5">{error}</p>}
+    </div>
+  );
+}
+
+function SectionHeading({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="flex-1 h-px bg-[#C9963F]/50" />
+      <h2 className="font-serif text-[28px] font-bold text-[#1F3A2B] whitespace-nowrap">{children}</h2>
+      <span className="flex-1 h-px bg-[#C9963F]/50" />
     </div>
   );
 }
