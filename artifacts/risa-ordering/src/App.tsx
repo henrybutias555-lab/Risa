@@ -17,10 +17,10 @@ import {
 } from "lucide-react";
 
 import risaLogo from "./assets/risa-logo-design.jpeg";
-import saladsPhoto from "./assets/menu-photos/salads-risa-enhanced.jpg";
+import saladsPhoto from "./assets/menu-photos/salad-photo.jpg";
 import noodlesPhoto from "./assets/menu-photos/noodles-risa-enhanced.jpg";
-import wingsPhoto from "./assets/menu-photos/wings-risa-enhanced.jpg";
-import mozzarellaPhoto from "./assets/menu-photos/mozzarella-risa-enhanced.jpg";
+import wingsPhoto from "./assets/menu-photos/wings-photo.jpg";
+import mozzarellaPhoto from "./assets/menu-photos/mozzarella-photo.jpg";
 import kenkeyPhoto from "./assets/menu-photos/kenkey-risa.jpg";
 import pineapplePhoto from "./assets/menu-photos/pineapple-risa.jpg";
 import sagoPhoto from "./assets/menu-photos/sago-square.jpg";
