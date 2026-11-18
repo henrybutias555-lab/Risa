@@ -964,9 +964,9 @@ export default function App() {
             <p className="font-serif text-2xl font-bold text-white leading-none">
               {money(totalPrice)}
             </p>
-            <p className="text-sm text-neutral-400 mt-1">
+            <p className="text-xs text-neutral-400 mt-1 whitespace-nowrap">
               {totalCount === 0
-                ? "Your order is waiting"
+                ? "Your order awaits"
                 : `${totalCount} item${totalCount > 1 ? "s" : ""} in your order`}
             </p>
           </div>
@@ -984,7 +984,7 @@ export default function App() {
               onClick={() =>
                 totalCount ? setIsCartOpen(true) : jumpTo(MENU[0].id)
               }
-              className="h-12 px-6 rounded-xl bg-[#C23B33] text-white font-medium flex items-center gap-2 active:scale-95 transition"
+              className="h-12 px-5 rounded-xl bg-[#C23B33] text-white font-medium whitespace-nowrap flex items-center gap-2 active:scale-95 transition"
             >
               {totalCount ? "View order" : "View menu"}
               <ArrowRight size={17} />
