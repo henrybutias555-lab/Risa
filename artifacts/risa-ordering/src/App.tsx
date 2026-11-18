@@ -25,6 +25,7 @@ import pennePhoto from './assets/menu-photos/penne-risa.jpg';
 import gizdodoPhoto from './assets/menu-photos/gizdodo-risa.jpg';
 import soboloPhoto from './assets/menu-photos/sobolo-risa.jpg';
 import friesPhoto from './assets/menu-photos/fries-risa.jpg';
+import bavariaPhoto from './assets/menu-photos/bavaria-malt.jpg';
 
 const PHONE_DISPLAY = '024 128 0476';
 const PHONE_TEL = '0241280476';
@@ -220,6 +221,13 @@ const MENU: Section[] = [
         thumb: kenkeyPhoto,
       },
       { id: 'drink-sobolo', name: 'Sobolo', price: 10, description: 'Chilled hibiscus drink.', thumb: soboloPhoto },
+      {
+        id: 'drink-bavaria',
+        name: 'Bavaria Malt',
+        price: 10,
+        description: 'Dark malt drink. 0.0% alcohol.',
+        thumb: bavariaPhoto,
+      },
       {
         id: 'drink-pineapple',
         name: 'Pineapple Juice',
