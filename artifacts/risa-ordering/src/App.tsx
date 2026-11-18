@@ -34,7 +34,14 @@ import bavariaPhoto from './assets/menu-photos/bavaria-malt.jpg';
 const PHONE_DISPLAY = '+233 24 128 0476';
 const WHATSAPP = '233241280476';
 // Tapping the RISA number anywhere opens a WhatsApp chat with it.
-const WHATSAPP_CHAT = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent('Hi RISA, I would like to place an order.')}`;
+const WHATSAPP_GREETING = [
+  'Hello RISA! 👋🏾',
+  '',
+  'I just checked out your menu and I’m craving something delicious 😋🍜',
+  '',
+  'I’d love to place an order. What’s available today? 🙏🏾',
+].join('\n');
+const WHATSAPP_CHAT = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(WHATSAPP_GREETING)}`;
 const POLICY_SEEN_KEY = 'risa-order-info-seen';
 
 interface Product {
@@ -411,22 +418,29 @@ export default function App() {
       const item = findItem(id)!;
       const section = MENU.find((s) => s.items.includes(item))!;
       const name = section.title === item.name ? item.name : `${section.title} – ${item.name}`;
-      return `• ${qty} × ${name}${option ? ` (${option})` : ''} = ${money(item.price * qty)}`;
+      return `▪️ ${qty} × ${name}${option ? ` _(${option})_` : ''} — ${money(item.price * qty)}`;
     });
+    const isDelivery = orderType === 'Delivery';
     const msg = [
-      '*NEW ORDER – RISA*',
+      'Hello RISA! 👋🏾',
+      'I’m craving something good today 😋 Here’s my order:',
       '',
+      '🧾 *MY ORDER*',
       ...lines,
       '',
-      `*Food subtotal: ${money(totalPrice)}*`,
-      orderType === 'Delivery' ? '_Delivery fee to be confirmed_' : null,
+      `💰 *Food subtotal: ${money(totalPrice)}*`,
+      isDelivery ? '_(Delivery fee to be confirmed)_' : null,
       '',
+      '👤 *MY DETAILS*',
       `Name: ${customerName.trim()}`,
       `Phone: ${customerPhone.trim()}`,
-      `Order type: ${orderType}`,
-      orderType === 'Delivery' && address.trim() ? `Delivery location: ${address.trim()}` : null,
-      `Spice level: ${spiceLevel}`,
-      allergyNote.trim() ? `Add-ons / flavours / allergies: ${allergyNote.trim()}` : null,
+      isDelivery ? '🛵 Order method: Delivery' : '🛍️ Order method: Pick up',
+      isDelivery && address.trim() ? `📍 Location: ${address.trim()}` : null,
+      `🌶️ Spice level: ${spiceLevel}`,
+      allergyNote.trim() ? `📝 Notes: ${allergyNote.trim()}` : null,
+      '',
+      'Please confirm my order and let me know the total. Thank you! 🙏🏾',
+      '_Sent from the RISA menu · Crafted for Cravings_',
     ]
       .filter((l) => l !== null)
       .join('\n');
